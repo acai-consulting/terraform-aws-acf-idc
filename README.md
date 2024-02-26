@@ -8,7 +8,6 @@
 <!-- SHIELDS -->
 [![Maintained by acai.gmbh][acai-shield]][acai-url]
 [![Terraform Version][terraform-version-shield]][terraform-version-url]
-[![Latest Release][release-shield]][release-url]
 
 <!-- DESCRIPTION -->
 [Terraform][terraform-url] module to deploy IAM Identity Center resources to enable Single-Sign-On on AWS via an Identity Provider (e.g. Azure).
