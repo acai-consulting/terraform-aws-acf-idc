@@ -30,7 +30,7 @@ variable "permission_sets" {
   }
 
   validation {
-    condition     = alltrue([for ps in var.permission_sets : ps.relay_state == null || (ps.relay_state != null && length(ps.relay_state) > 0)])
+    condition     = alltrue([for ps in var.permission_sets : ps.relay_state == null ? true : length(ps.relay_state) > 0])
     error_message = "If provided, each permission set's relay_state must not be empty.\n"
   }
 
@@ -55,7 +55,7 @@ variable "permission_sets" {
   }
 
   validation {
-    condition     = alltrue([for ps in var.permission_sets : ps.inline_policy_json == "" || (ps.inline_policy_json != "" && jsondecode(ps.inline_policy_json) != null)])
+    condition     = alltrue([for ps in var.permission_sets : ps.inline_policy_json == "" ? true : jsondecode(ps.inline_policy_json) != null])
     error_message = "Each permission set's inline_policy_json must be valid JSON if provided.\n"
   }
 
