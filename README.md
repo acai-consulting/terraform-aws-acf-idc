@@ -168,44 +168,52 @@ module "sso_identity_center" {
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 4.47 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.10 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 5.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.47 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 5.0 |
 
 ## Modules
 
-| Name | Source | Version |
-|------|--------|---------|
-| <a name="module_sso_account_assignments"></a> [sso\_account\_assignments](#module\_sso\_account\_assignments) | ./modules/account-assignment | n/a |
-| <a name="module_sso_permission_sets"></a> [sso\_permission\_sets](#module\_sso\_permission\_sets) | ./modules/permission-set | n/a |
+No modules.
 
 ## Resources
 
 | Name | Type |
 |------|------|
-| [aws_ssoadmin_instances.sso](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ssoadmin_instances) | data source |
+| [aws_ssoadmin_account_assignment.idc_groups](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_account_assignment) | resource |
+| [aws_ssoadmin_account_assignment.idc_users](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_account_assignment) | resource |
+| [aws_ssoadmin_customer_managed_policy_attachment.idc_ps_customer_managed](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_customer_managed_policy_attachment) | resource |
+| [aws_ssoadmin_managed_policy_attachment.idc_ps_aws_managed](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_managed_policy_attachment) | resource |
+| [aws_ssoadmin_permission_set.idc_ps](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_permission_set) | resource |
+| [aws_ssoadmin_permission_set_inline_policy.idc_inline](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_permission_set_inline_policy) | resource |
+| [aws_ssoadmin_permissions_boundary_attachment.idc_boundary_aws_managed](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_permissions_boundary_attachment) | resource |
+| [aws_ssoadmin_permissions_boundary_attachment.idc_boundary_customer_managed](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_permissions_boundary_attachment) | resource |
+| [aws_identitystore_group.idc_groups](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/identitystore_group) | data source |
+| [aws_identitystore_user.idc_users](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/identitystore_user) | data source |
+| [aws_ssoadmin_instances.idc_instance](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ssoadmin_instances) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_account_assignments"></a> [account\_assignments](#input\_account\_assignments) | A list of account assignments. | <pre>list(object({<br>    account_id = string,<br>    permissions = list(object({<br>      permission_set_name = string<br>      users               = list(string)<br>      groups              = list(string)<br>    }))<br>  }))</pre> | `[]` | no |
-| <a name="input_permission_sets"></a> [permission\_sets](#input\_permission\_sets) | A list of permission sets. | <pre>list(object({<br>    name               = string<br>    description        = string<br>    session_duration   = number<br>    inline_policy_json = string<br>    managed_policies = list(object({<br>      managed_by  = string<br>      policy_name = string<br>      policy_path = string<br>    }))<br>    boundary_policy = map(object({<br>      managed_by  = string<br>      policy_name = string<br>      policy_path = string<br>    }))<br>  }))</pre> | `[]` | no |
+| <a name="input_account_assignments"></a> [account\_assignments](#input\_account\_assignments) | A list of account assignments. | <pre>list(object({<br>    account_id = string,<br>    permissions = list(object({<br>      permission_set_name = string<br>      users               = optional(list(string), [])<br>      groups              = optional(list(string), [])<br>    }))<br>  }))</pre> | `[]` | no |
+| <a name="input_permission_sets"></a> [permission\_sets](#input\_permission\_sets) | A list of AWS Identity Center Permission Sets. | <pre>list(object({<br>    name                      = string<br>    description               = optional(string, "not provided")<br>    session_duration_in_hours = optional(number, 4)<br>    relay_state               = optional(string, null)<br>    managed_policies = optional(list(object({<br>      managed_by  = string<br>      policy_name = string<br>      policy_path = optional(string, "/")<br>    })), [])<br>    inline_policy_json = optional(string, "")<br>    boundary_policies = optional(list(object({<br>      managed_by  = string<br>      policy_name = string<br>      policy_path = optional(string, "/")<br>    })), [])<br>  }))</pre> | `[]` | no |
+| <a name="input_resource_tags"></a> [resource\_tags](#input\_resource\_tags) | A map of tags to assign to the resources in this module. | `map(string)` | `{}` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
+| <a name="output_group_assignments"></a> [group\_assignments](#output\_group\_assignments) | Map of group assignments with Single Sign-On. |
 | <a name="output_identity_store_arn"></a> [identity\_store\_arn](#output\_identity\_store\_arn) | The Amazon Resource Name (ARN) of the SSO Instance. |
 | <a name="output_identity_store_id"></a> [identity\_store\_id](#output\_identity\_store\_id) | Identity Store ID associated with the Single Sign-On Instance. |
-| <a name="output_sso_group_assignments"></a> [sso\_group\_assignments](#output\_sso\_group\_assignments) | Map of group assignments with Single Sign-On. |
-| <a name="output_sso_permission_sets"></a> [sso\_permission\_sets](#output\_sso\_permission\_sets) | Map of permission sets configured to be used with Single Sign-On. |
-| <a name="output_sso_user_assignments"></a> [sso\_user\_assignments](#output\_sso\_user\_assignments) | Map of user assignments with Single Sign-On. |
+| <a name="output_permission_sets"></a> [permission\_sets](#output\_permission\_sets) | Map of permission sets configured to be used with Single Sign-On. |
+| <a name="output_user_assignments"></a> [user\_assignments](#output\_user\_assignments) | Map of user assignments with Single Sign-On. |
 <!-- END_TF_DOCS -->
 
 <!-- AUTHORS -->
