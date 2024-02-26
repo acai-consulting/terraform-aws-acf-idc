@@ -77,7 +77,7 @@ locals {
 
   account_assignments = [
     {
-      account_id = "590183833356" # ACAI AWS Testbed Core Logging Account
+      account_id = "992382728088" # ACAI AWS Testbed Core Security Account
       permissions = [
         {
           permission_set_name = "Platform_AdminAccess"
@@ -86,14 +86,14 @@ locals {
       ]
     },
     {
-      account_id = "992382728088" # ACAI AWS Testbed Core Security Account
+      account_id = "590183833356" # ACAI AWS Testbed Core Logging Account
       permissions = [
         {
-          permission_set_name = "Platform_AdminAccess"
+          permission_set_name = "Platform_ViewOnly"
           users               = ["contact@acai.gmbh"]
         }
       ]
-    }
+    }  
   ]
 }
 
