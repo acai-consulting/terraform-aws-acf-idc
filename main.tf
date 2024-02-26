@@ -199,10 +199,18 @@ resource "aws_ssoadmin_account_assignment" "idc_users" {
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ IDC ACCOUNT ASSIGNMENTS - GROUPS
 # ---------------------------------------------------------------------------------------------------------------------
+locals {
+  groups_with_assignment = distinct(flatten([
+    for assignment in var.account_assignments : [
+      for permission in assignment.permissions : [
+        for group in permission.groups : lower(group)
+      ]
+    ]
+  ]))
+}
 
-
-data "aws_identitystore_group" "sso" {
-  for_each = { for group in local.groups_nested : group.index => group.group_name }
+data "aws_identitystore_group" "idc_groups" {
+  for_each = toset(local.groups_with_assignment)
 
   identity_store_id = local.identity_store_id
 
@@ -214,21 +222,37 @@ data "aws_identitystore_group" "sso" {
   }
 }
 
+locals {
+  identity_store_groups = { for group in data.aws_identitystore_group.idc_groups : group.display_name => group.group_id }
+
+  group_assignments = distinct(flatten([
+    for account in var.account_assignments : [
+      for permission in account.permissions : [
+        for group in permission.groups : {
+          index : lower("${account.account_id}/${permission.permission_set_name}/${group}"),
+          account_id : account.account_id,
+          permission_set : permission.permission_set_name,
+          group_name : group
+        }
+      ]
+    ]
+  ]))
+}
+
 resource "aws_ssoadmin_account_assignment" "idc_groups" {
   for_each = {
     for group in local.group_assignments : group.index => group
-    if var.group_id_map_mapping != null ? contains(keys(var.group_id_map_mapping), group.group_name) : contains(keys(data.aws_identitystore_group.idc_get_group), lower(group.group_name))
   }
 
   instance_arn       = local.identity_store_arn
   permission_set_arn = aws_ssoadmin_permission_set.idc_ps[each.value.permission_set].arn
 
-  principal_id   = var.group_id_map_mapping != null ? var.group_id_map_mapping[each.value.group_name] : try(local.identity_store_groups[lower(each.value.group_name)], "group_does_not_exist")
+  principal_id   = try(local.identity_store_groups[lower(each.value.group_name)], "group_does_not_exist")
   principal_type = "GROUP"
 
   target_id   = each.value.account_id
   target_type = "AWS_ACCOUNT"
-  /*
+  
   lifecycle {
     # Permission_set must exist in var.permission_sets
     precondition {
@@ -242,5 +266,4 @@ resource "aws_ssoadmin_account_assignment" "idc_groups" {
       error_message = "Group \"${each.value.group_name}\" is missing in identity store."
     }
   }
-  */
 }

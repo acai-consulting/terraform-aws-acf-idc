@@ -8,23 +8,23 @@ output "identity_store_arn" {
   value       = local.identity_store_arn
 }
 
-output "sso_permission_sets" {
+output "permission_sets" {
   description = "Map of permission sets configured to be used with Single Sign-On."
   value = {
-    for m in module.sso_permission_sets : m.permission_set.name => m.permission_set
+    for set in aws_ssoadmin_permission_set.idc_ps : set.name => set
   }
 }
 
-output "sso_user_assignments" {
+output "user_assignments" {
   description = "Map of user assignments with Single Sign-On."
   value = {
-    for m in module.sso_account_assignments : m.account_id => m.user_assignments
+    for assignment in aws_ssoadmin_account_assignment.idc_users : assignment.target_id => assignment...
   }
 }
 
-output "sso_group_assignments" {
+output "group_assignments" {
   description = "Map of group assignments with Single Sign-On."
   value = {
-    for m in module.sso_account_assignments : m.account_id => m.group_assignments
+    for assignment in aws_ssoadmin_account_assignment.idc_groups : assignment.target_id => assignment...
   }
 }
