@@ -11,11 +11,11 @@
 [![Latest Release][release-shield]][release-url]
 
 <!-- DESCRIPTION -->
-[Terraform][terraform-url] module to deploy IAM Identity Center resources to enable Single-Sign-On on [AWS][aws-url] via an Identity Provider.
+[Terraform][terraform-url] module to deploy IAM Identity Center resources to enable Single-Sign-On on AWS via an Identity Provider (e.g. Azure).
 
 <!-- ARCHITECTURE -->
 ## Architecture
-![idc architecture][architecture-png]
+<img src="docs/acf-identity-center.png">
 
 <!-- REQUIREMENTS -->
 ## Requirements
@@ -24,144 +24,87 @@
 - Enable AWS Organizations and add AWS Accounts.
 - Enable IAM Identity Center (successor to AWS Single Sign-On).
 - Create identities in IAM Identity Center (Users and Groups) or connect to an external identity provider. [documentation](https://docs.aws.amazon.com/singlesignon/latest/userguide/manage-your-identity-source-idp.html)
-- Ensure that Terraform is using a role with permissions required for IAM Identity Center management.
-
-<!-- DOCUMENTATION -->
-## Managed policies and inline policies
-When you need to set the permissions for an identity in IAM, you must decide whether to use an AWS managed policy, a customer managed policy, or an inline policy. The following documentation provide more information about each of the types of identity-based policies and when to use them. [documentation](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_managed-vs-inline.html)
+- Ensure that Terraform pipeline is using a role with permissions required for IAM Identity Center management.
 
 <!-- USAGE -->
 ## Usage
 ```hcl
 locals {
-  sso_permission_sets = [
+  permission_sets = [
     {
-      name : "AdministratorAccess"
-      description : "This permission set grants full admin access"
-      session_duration : 2
-      inline_policy_json : ""
-      managed_policies : [
+      "name" : "Platform_AdminAccess"
+      "session_duration_in_hours" : 4
+      "description" : "Used by Platform Admins"
+      "managed_policies" : [
         {
-          managed_by : "aws"
-          policy_name : "AdministratorAccess"
-          policy_path : "/"
-        }
+          "managed_by" : "aws"
+          "policy_name" : "AdministratorAccess"
+        },
       ]
-      boundary_policy : {}
     },
     {
-      name : "Billing+ViewOnlyAccess"
-      description : "This permission set grants billing and read-only access"
-      session_duration : 10
-      inline_policy_json : ""
-      managed_policies : [
+      "name" : "Platform_ViewOnly"
+      "session_duration_in_hours" : 4
+      "description" : "Used by Platform team for view-only access to member accounts"
+      "managed_policies" : [
         {
-          managed_by : "aws"
-          policy_name : "Billing"
-          policy_path : "/job-function/"
+          "managed_by" : "aws"
+          "policy_name" : "ViewOnlyAccess"
+          "policy_path" : "/job-function/"
         },
         {
-          managed_by : "aws"
-          policy_name : "ViewOnlyAccess"
-          policy_path : "/job-function/"
-        }
+          "managed_by" : "aws"
+          "policy_name" : "AWSSupportAccess"
+        },
       ]
-      boundary_policy : {}
-    },
-    {
-      name : "SupportUser"
-      description : "This permission set grants access to support users"
-      session_duration : 10
-      inline_policy_json : ""
-      managed_policies : [
-        {
-          managed_by : "aws"
-          policy_name : "SupportUser"
-          policy_path : "/job-function/"
-        }
-      ]
-      boundary_policy : {}
-    },
-    {
-      name : "CustomerPolicy"
-      description : "This permission set grants reader access to S3"
-      session_duration : 10
-      inline_policy_json : ""
-      managed_policies : [
-        {
-          managed_by : "customer"
-          policy_name : "CustomerPolicy"
-          policy_path : "/customer-path/"
-        }
-      ]
-      boundary_policy : {}
-    },
-    {
-      name : "InlineS3Reader"
-      description : "This permission set grants reader access to S3"
-      session_duration : 10
-      inline_policy_json : data.aws_iam_policy_document.s3_reader.json
-      managed_policies : []
-      boundary_policy : {}
+      "inline_policy_json" : jsonencode({
+        "Version" : "2012-10-17",
+        "Statement" : [
+          {
+            "Sid" : "OrganizationsDescribe",
+            "Effect" : "Allow",
+            "Action" : [
+              "organizations:Describe*"
+            ],
+            "Resource" : [
+              "*"
+            ]
+          }
+        ]
+      })
     }
   ]
 
-  sso_account_assignments = [
+  account_assignments = [
     {
-      account_id = "151251261561"
+      account_id = "590183833356" # ACAI AWS Testbed Core Logging Account
       permissions = [
         {
-          permission_set_name = "AdministratorAccess"
-          users               = ["user@example.com"]
-          groups              = ["group-aws-admins"]
+          permission_set_name = "Platform_AdminAccess"
+          users               = ["contact@acai.gmbh"]
         }
       ]
     },
     {
-      account_id = "6136161326123"
+      account_id = "992382728088" # ACAI AWS Testbed Core Security Account
       permissions = [
         {
-          permission_set_name = "AdministratorAccess"
-          users               = ["admin@example.com"]
-          groups              = []
-        },
-        {
-          permission_set_name = "Billing+ViewOnlyAccess"
-          users               = []
-          groups              = ["group-aws-billing"]
-        },
-        {
-          permission_set_name = "SupportUser"
-          users               = []
-          groups              = ["group-aws-supporter"]
-        },
-        {
-          permission_set_name = "CustomerPolicy"
-          users               = ["customer@example.com"]
-          groups              = []
-        },
-        {
-          permission_set_name = "InlineS3Reader"
-          users               = []
-          groups              = ["group-aws-s3reader"]
+          permission_set_name = "Platform_AdminAccess"
+          users               = ["contact@acai.gmbh"]
         }
       ]
     }
   ]
 }
 
-module "sso_identity_center" {
+module "aws_identity_center" {
   source  = "app.terraform.io/acai-consulting/idc/aws"
   version = "~> 1.0"
 
-  permission_sets     = local.sso_permission_sets
-  account_assignments = local.sso_account_assignments
+  permission_sets     = local.permission_sets
+  account_assignments = local.account_assignments
 }
 ```
-
-<!-- EXAMPLES -->
-## Examples
-* [`examples/complete`][sso-example-url]
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -235,10 +178,10 @@ This module is maintained by [ACAI GmbH][acai-url] with help from [these amazing
 [acai-url]: https://acai.gmbh
 [terraform-version-shield]: https://img.shields.io/badge/tf-%3E%3D1.3.10-blue.svg?style=flat&color=blueviolet
 [terraform-version-url]: https://www.terraform.io/upgrade-guides/1-3-10.html
-[release-shield]: https://img.shields.io/github/v/release/acai-consulting/terraform-aws-acf-ou-mgmt?style=flat&color=success
-[architecture-png]: https://github.com/acai-consulting/terraform-aws-acf-ou-mgmt/blob/main/docs/architecture.png?raw=true
-[release-url]: https://github.com/acai-consulting/terraform-aws-acf-ou-mgmt/releases
-[contributors-url]: https://github.com/acai-consulting/terraform-aws-acf-ou-mgmt/graphs/contributors
-[license-url]: https://github.com/acai-consulting/terraform-aws-acf-ou-mgmt/tree/main/LICENSE
+[release-shield]: https://img.shields.io/github/v/release/acai-consulting/terraform-aws-acf-idc?style=flat&color=success
+[architecture-png]: https://github.com/acai-consulting/terraform-aws-acf-idc/blob/main/docs/architecture.png?raw=true
+[release-url]: https://github.com/acai-consulting/terraform-aws-acf-idc/releases
+[contributors-url]: https://github.com/acai-consulting/terraform-aws-acf-idc/graphs/contributors
+[license-url]: https://github.com/acai-consulting/terraform-aws-acf-idc/tree/main/LICENSE
 [terraform-url]: https://www.terraform.io
-[aws-url]: https://aws.amazon.comterraform-aws-acf-ou-mgmt/tree/main/examples/complete
+[aws-url]: https://aws.amazon.comterraform-aws-acf-idc/tree/main/examples/complete
