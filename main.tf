@@ -129,7 +129,9 @@ resource "aws_ssoadmin_permissions_boundary_attachment" "idc_boundary_customer_m
 locals {
   users_with_assignment = distinct(flatten([
     for assignment in var.account_assignments : [
-      for p in assignment.permissions : lower(p.user)
+      for permission in assignment.permissions : [
+        for user in permission.users : lower(user)
+      ]
     ]
   ]))
 }
@@ -155,10 +157,9 @@ locals {
     for account in var.account_assignments : [
       for permission in account.permissions : [
         for user in permission.users : {
-          index : lower("${account.account_name}/${permission.permission_set_name}/${user}")
-          account_name : account.account_name
-          account_id : account.account_id
-          permission_set : permission.permission_set_name
+          index : lower("${account.account_id}/${permission.permission_set_name}/${user}"),
+          account_id : account.account_id,
+          permission_set : permission.permission_set_name,
           user_name : user
         }
       ]
