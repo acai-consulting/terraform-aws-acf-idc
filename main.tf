@@ -137,7 +137,7 @@ locals {
 }
 
 data "aws_identitystore_user" "idc_users" {
-  for_each = toset(local.users_with_assignment )
+  for_each = toset(local.users_with_assignment)
 
   identity_store_id = local.identity_store_id
 
@@ -180,7 +180,7 @@ resource "aws_ssoadmin_account_assignment" "idc_users" {
 
   target_id   = each.value.account_id
   target_type = "AWS_ACCOUNT"
-  
+
   lifecycle {
     # Permission_set must exist in var.permission_sets
     precondition {
@@ -252,7 +252,7 @@ resource "aws_ssoadmin_account_assignment" "idc_groups" {
 
   target_id   = each.value.account_id
   target_type = "AWS_ACCOUNT"
-  
+
   lifecycle {
     # Permission_set must exist in var.permission_sets
     precondition {
