@@ -1,4 +1,4 @@
-module github.com/acai-consulting/terraform-aws-idc/test
+module github.com/acai-consulting/terraform-aws-acf-idc/test
 
 go 1.18
 

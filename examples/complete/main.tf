@@ -3,18 +3,27 @@
 # ---------------------------------------------------------------------------------------------------------------------
 provider "aws" {
   region = "eu-central-1"
+  # please use the target role you need.
+  # create additional providers in case your module provisions to multiple core accounts.
+  assume_role {
+    role_arn = "arn:aws:iam::471112796356:role/OrganizationAccountAccessRole"  # ACAI AWS Testbed Org-Mgmt Account
+    #role_arn = "arn:aws:iam::590183833356:role/OrganizationAccountAccessRole"  # ACAI AWS Testbed Core Logging Account
+    #role_arn = "arn:aws:iam::992382728088:role/OrganizationAccountAccessRole"  # ACAI AWS Testbed Core Security Account
+    #role_arn = "arn:aws:iam::767398146370:role/OrganizationAccountAccessRole"  # ACAI AWS Testbed Workload Account
+  }
 }
+
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ BACKEND
 # ---------------------------------------------------------------------------------------------------------------------
 terraform {
   backend "remote" {
-    organization = "nuvibit"
+    organization = "acai"
     hostname     = "app.terraform.io"
 
     workspaces {
-      name = "aws-s-testing"
+      name = "aws-testbed"
     }
   }
 }
@@ -23,12 +32,12 @@ terraform {
 # ¦ REQUIREMENTS
 # ---------------------------------------------------------------------------------------------------------------------
 terraform {
-  required_version = ">= 1.0.0"
+  required_version = ">= 1.3.10"
 
   required_providers {
     aws = {
       source                = "hashicorp/aws"
-      version               = "~> 4.0"
+      version               = "~> 5.0"
       configuration_aliases = []
     }
   }
@@ -40,135 +49,72 @@ terraform {
 data "aws_region" "current" {}
 data "aws_caller_identity" "current" {}
 
-data "aws_iam_policy_document" "s3_reader" {
-  statement {
-    sid = "S3Reader"
-
-    actions = [
-      "s3:ListAllMyBuckets",
-      "s3:GetBucketLocation",
-    ]
-
-    resources = [
-      "arn:aws:s3:::*",
-    ]
-  }
-}
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ LOCALS
 # ---------------------------------------------------------------------------------------------------------------------
 locals {
-  sso_permission_sets = [
+  permission_sets = [
     {
-      name : "AdministratorAccess"
-      description : "This permission set grants full admin access"
-      session_duration : 2
-      inline_policy_json : ""
-      managed_policies : [
+      "name" : "Platform_AdminAccess"
+      "session_duration_in_hours" : 4
+      "description" : "Used by Platform Admins"
+      "managed_policies" : [
         {
-          managed_by : "aws"
-          policy_name : "AdministratorAccess"
-          policy_path : "/"
-        }
+          "managed_by" : "aws"
+          "policy_name" : "AdministratorAccess"
+        },
       ]
-      boundary_policy : {}
     },
     {
-      name : "Billing+ViewOnlyAccess"
-      description : "This permission set grants billing and read-only access"
-      session_duration : 10
-      inline_policy_json : ""
-      managed_policies : [
+      "name" : "Platform_ViewOnly"
+      "session_duration_in_hours" : 4
+      "description" : "Used by Platform team for view-only access to member accounts"
+      "managed_policies" : [
         {
-          managed_by : "aws"
-          policy_name : "Billing"
-          policy_path : "/job-function/"
+          "managed_by" : "aws"
+          "policy_name" : "ViewOnlyAccess"
+          "policy_path" : "/job-function/"
         },
         {
-          managed_by : "aws"
-          policy_name : "ViewOnlyAccess"
-          policy_path : "/job-function/"
-        }
+          "managed_by" : "aws"
+          "policy_name" : "AWSSupportAccess"
+        },
       ]
-      boundary_policy : {}
-    },
-    {
-      name : "SupportUser"
-      description : "This permission set grants access to support users"
-      session_duration : 10
-      inline_policy_json : ""
-      managed_policies : [
-        {
-          managed_by : "aws"
-          policy_name : "SupportUser"
-          policy_path : "/job-function/"
-        }
-      ]
-      boundary_policy : {}
-    },
-    {
-      name : "CustomerPolicy"
-      description : "This permission set grants reader access to S3"
-      session_duration : 10
-      inline_policy_json : ""
-      managed_policies : [
-        {
-          managed_by : "customer"
-          policy_name : "CustomerPolicy"
-          policy_path : "/customer-path/"
-        }
-      ]
-      boundary_policy : {}
-    },
-    {
-      name : "InlineS3Reader"
-      description : "This permission set grants reader access to S3"
-      session_duration : 10
-      inline_policy_json : data.aws_iam_policy_document.s3_reader.json
-      managed_policies : []
-      boundary_policy : {}
+      "inline_policy_json" : jsonencode({
+        "Version" : "2012-10-17",
+        "Statement" : [
+          {
+            "Sid" : "OrganizationsDescribe",
+            "Effect" : "Allow",
+            "Action" : [
+              "organizations:Describe*"
+            ],
+            "Resource" : [
+              "*"
+            ]
+          }
+        ]
+      })
     }
   ]
 
-  sso_account_assignments = [
+  account_assignments = [
     {
-      account_id = "151251261561"
+      account_id = "590183833356" # ACAI AWS Testbed Core Logging Account
       permissions = [
         {
-          permission_set_name = "AdministratorAccess"
-          users               = ["user@example.com"]
-          groups              = ["group-aws-admins"]
+          permission_set_name = "Platform_AdminAccess"
+          users               = ["contact@acai.gmbh"]
         }
       ]
     },
     {
-      account_id = "6136161326123"
+      account_id = "992382728088" # ACAI AWS Testbed Core Security Account
       permissions = [
         {
-          permission_set_name = "AdministratorAccess"
-          users               = ["admin@example.com"]
-          groups              = []
-        },
-        {
-          permission_set_name = "Billing+ViewOnlyAccess"
-          users               = []
-          groups              = ["group-aws-billing"]
-        },
-        {
-          permission_set_name = "SupportUser"
-          users               = []
-          groups              = ["group-aws-supporter"]
-        },
-        {
-          permission_set_name = "CustomerPolicy"
-          users               = ["customer@example.com"]
-          groups              = []
-        },
-        {
-          permission_set_name = "InlineS3Reader"
-          users               = []
-          groups              = ["group-aws-s3reader"]
+          permission_set_name = "Platform_AdminAccess"
+          users               = ["contact@acai.gmbh"]
         }
       ]
     }
@@ -176,11 +122,11 @@ locals {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# ¦ SSO - IAM IDENTITY CENTER
+# ¦ AWS IAM IDENTITY CENTER
 # ---------------------------------------------------------------------------------------------------------------------
-module "sso_identity_center" {
+module "aws_identity_center" {
   source = "../../"
 
-  permission_sets     = local.sso_permission_sets
-  account_assignments = local.sso_account_assignments
+  permission_sets     = local.permission_sets
+  account_assignments = local.account_assignments
 }
