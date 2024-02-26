@@ -1,22 +1,21 @@
-
-# AWS IAM Identity Center (successor to AWS SSO) - Single Sign-On - Terraform module
+# terraform-aws-acf-idc Terraform module
 
 <!-- LOGO -->
-<a href="https://nuvibit.com">
-    <img src="https://nuvibit.com/images/logo/logo-nuvibit-badge.png" alt="nuvibit logo" title="nuvibit" align="right" width="100" />
+<a href="https://acai.gmbh">    
+  <img src="https://github.com/acai-consulting/acai.public/raw/main/logo/logo.png" alt="acai logo" title="ACAI" align="right" height="100" />
 </a>
 
 <!-- SHIELDS -->
-[![Maintained by nuvibit.com][nuvibit-shield]][nuvibit-url]
+[![Maintained by acai.gmbh][acai-shield]][acai-url]
 [![Terraform Version][terraform-version-shield]][terraform-version-url]
 [![Latest Release][release-shield]][release-url]
 
 <!-- DESCRIPTION -->
-[Terraform][terraform-url] module to deploy IAM Identity Center resources to enable Single-Sign-On on [AWS][aws-url]
+[Terraform][terraform-url] module to deploy IAM Identity Center resources to enable Single-Sign-On on [AWS][aws-url] via an Identity Provider.
 
 <!-- ARCHITECTURE -->
 ## Architecture
-![sso architecture][architecture-png]
+![idc architecture][architecture-png]
 
 <!-- REQUIREMENTS -->
 ## Requirements
@@ -152,7 +151,7 @@ locals {
 }
 
 module "sso_identity_center" {
-  source  = "app.terraform.io/nuvibit/sso/aws"
+  source  = "app.terraform.io/acai-consulting/idc/aws"
   version = "~> 1.0"
 
   permission_sets     = local.sso_permission_sets
@@ -212,30 +211,26 @@ module "sso_identity_center" {
 <!-- AUTHORS -->
 ## Authors
 
-This module is maintained by [Nuvibit][nuvibit-url] with help from [these amazing contributors][contributors-url]
+This module is maintained by [ACAI GmbH][acai-url] with help from [these amazing contributors][contributors-url]
 
 <!-- LICENSE -->
 ## License
 
-This module is licensed under Apache 2.0
-<br />
-See [LICENSE][license-url] for full details
 
 <!-- COPYRIGHT -->
 <br />
 <br />
-<p align="center">Copyright &copy; 2023 Nuvibit AG</p>
+<p align="center">Copyright &copy; 2024 ACAI GmbH</p>
 
 <!-- MARKDOWN LINKS & IMAGES -->
-[nuvibit-shield]: https://img.shields.io/badge/maintained%20by-nuvibit.com-%235849a6.svg?style=flat&color=1c83ba
-[nuvibit-url]: https://nuvibit.com
-[terraform-version-shield]: https://img.shields.io/badge/tf-%3E%3D0.15.0-blue.svg?style=flat&color=blueviolet
-[terraform-version-url]: https://www.terraform.io/upgrade-guides/0-15.html
-[release-shield]: https://img.shields.io/github/v/release/nuvibit/terraform-aws-sso?style=flat&color=success
-[architecture-png]: https://github.com/nuvibit/terraform-aws-sso/blob/main/docs/architecture.png?raw=true
-[release-url]: https://github.com/nuvibit/terraform-aws-sso/releases
-[contributors-url]: https://github.com/nuvibit/terraform-aws-sso/graphs/contributors
-[license-url]: https://github.com/nuvibit/terraform-aws-sso/tree/main/LICENSE
+[acai-shield]: https://img.shields.io/badge/maintained_by-acai.gmbh-CB224B?style=flat
+[acai-url]: https://acai.gmbh
+[terraform-version-shield]: https://img.shields.io/badge/tf-%3E%3D1.3.10-blue.svg?style=flat&color=blueviolet
+[terraform-version-url]: https://www.terraform.io/upgrade-guides/1-3-10.html
+[release-shield]: https://img.shields.io/github/v/release/acai-consulting/terraform-aws-acf-ou-mgmt?style=flat&color=success
+[architecture-png]: https://github.com/acai-consulting/terraform-aws-acf-ou-mgmt/blob/main/docs/architecture.png?raw=true
+[release-url]: https://github.com/acai-consulting/terraform-aws-acf-ou-mgmt/releases
+[contributors-url]: https://github.com/acai-consulting/terraform-aws-acf-ou-mgmt/graphs/contributors
+[license-url]: https://github.com/acai-consulting/terraform-aws-acf-ou-mgmt/tree/main/LICENSE
 [terraform-url]: https://www.terraform.io
-[aws-url]: https://aws.amazon.com
-[sso-example-url]: https://github.com/nuvibit/terraform-aws-sso/tree/main/examples/complete
+[aws-url]: https://aws.amazon.comterraform-aws-acf-ou-mgmt/tree/main/examples/complete

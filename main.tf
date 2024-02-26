@@ -2,61 +2,244 @@
 # ¦ REQUIREMENTS
 # ---------------------------------------------------------------------------------------------------------------------
 terraform {
-  required_version = ">= 1.0.0"
+  required_version = ">= 1.3.10"
 
   required_providers {
     aws = {
       source                = "hashicorp/aws"
-      version               = "~> 4.47"
+      version               = "~> 5.0"
       configuration_aliases = []
     }
   }
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# ¦ DATA
+# ¦ IDC INSTANCE
 # ---------------------------------------------------------------------------------------------------------------------
-data "aws_ssoadmin_instances" "sso" {}
+data "aws_ssoadmin_instances" "idc_instance" {}
+
+locals {
+  identity_store_id  = tolist(data.aws_ssoadmin_instances.idc_instance.identity_store_ids)[0]
+  identity_store_arn = tolist(data.aws_ssoadmin_instances.idc_instance.arns)[0]
+}
+
 
 # ---------------------------------------------------------------------------------------------------------------------
-# ¦ LOCALS
+# ¦ IDC PERMISSION SETS
 # ---------------------------------------------------------------------------------------------------------------------
 locals {
-  identity_store_id  = tolist(data.aws_ssoadmin_instances.sso.identity_store_ids)[0]
-  identity_store_arn = tolist(data.aws_ssoadmin_instances.sso.arns)[0]
+  policies_nested = distinct(flatten([
+    for set in var.permission_sets : [
+      for policy in set.managed_policies : {
+        index : "${set.name}/POLICY/${policy.policy_name}"
+        permission_set : set.name
+        managed_by : policy.managed_by
+        policy_name : policy.policy_name
+        policy_path : policy.policy_path
+      }
+    ]
+  ]))
+}
+
+resource "aws_ssoadmin_permission_set" "idc_ps" {
+  for_each = {
+    for ps in var.permission_sets : ps.name => ps
+  }
+
+  name             = each.value.name
+  description      = each.value.description
+  instance_arn     = local.identity_store_arn
+  session_duration = "PT${each.value.session_duration_in_hours}H"
+  relay_state      = each.value.relay_state
+  tags             = var.resource_tags
+}
+
+resource "aws_ssoadmin_managed_policy_attachment" "idc_ps_aws_managed" {
+  for_each = {
+    for policy in local.policies_nested : policy.index => policy
+    if lower(policy.managed_by) == "aws"
+  }
+
+  instance_arn       = local.identity_store_arn
+  managed_policy_arn = "arn:aws:iam::aws:policy${each.value.policy_path}${each.value.policy_name}"
+  permission_set_arn = aws_ssoadmin_permission_set.idc_ps[each.value.permission_set].arn
+}
+
+resource "aws_ssoadmin_customer_managed_policy_attachment" "idc_ps_customer_managed" {
+  for_each = {
+    for policy in local.policies_nested : policy.index => policy
+    if lower(policy.managed_by) == "customer"
+  }
+
+  instance_arn       = local.identity_store_arn
+  permission_set_arn = aws_ssoadmin_permission_set.idc_ps[each.value.permission_set].arn
+  customer_managed_policy_reference {
+    name = each.value.policy_name
+    path = each.value.policy_path
+  }
+}
+
+resource "aws_ssoadmin_permission_set_inline_policy" "idc_inline" {
+  for_each = {
+    for set in var.permission_sets : set.name => set.inline_policy_json
+    if length(try(set.inline_policy_json, "")) > 0
+  }
+
+  inline_policy      = each.value
+  instance_arn       = local.identity_store_arn
+  permission_set_arn = aws_ssoadmin_permission_set.idc_ps[each.key].arn
+}
+
+resource "aws_ssoadmin_permissions_boundary_attachment" "idc_boundary_aws_managed" {
+  for_each = {
+    for set in var.permission_sets : set.name => set.boundary_policy
+    if lower(try(set.boundary_policy.managed_by, "")) == "aws"
+  }
+
+  instance_arn       = local.identity_store_arn
+  permission_set_arn = aws_ssoadmin_permission_set.idc_ps[each.key].arn
+  permissions_boundary {
+    customer_managed_policy_reference {
+      name = each.value.policy_name
+      path = each.value.policy_path
+    }
+  }
+}
+
+resource "aws_ssoadmin_permissions_boundary_attachment" "idc_boundary_customer_managed" {
+  for_each = {
+    for set in var.permission_sets : set.name => set.boundary_policy
+    if lower(try(set.boundary_policy.managed_by, "")) == "customer"
+  }
+
+  instance_arn       = local.identity_store_arn
+  permission_set_arn = aws_ssoadmin_permission_set.idc_ps[each.key].arn
+  permissions_boundary {
+    customer_managed_policy_reference {
+      name = each.value.policy_name
+      path = each.value.policy_path
+    }
+  }
+}
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# ¦ IDC ACCOUNT ASSIGNMENTS - USERS
+# ---------------------------------------------------------------------------------------------------------------------
+locals {
+  users_with_assignment = distinct(flatten([
+    for assignment in var.account_assignments : [
+      for p in assignment.permissions : lower(p.user)
+    ]
+  ]))
+}
+
+data "aws_identitystore_user" "idc_users" {
+  for_each = toset(local.users_with_assignment )
+
+  identity_store_id = local.identity_store_id
+
+  alternate_identifier {
+    unique_attribute {
+      attribute_path = "UserName"
+      # workaround in case UserName is cut off by scim sync
+      attribute_value = substr(each.value, 0, 54)
+    }
+  }
+}
+
+locals {
+  identity_store_users = { for user in data.aws_identitystore_user.idc_users : user.user_name => user.user_id }
+
+  user_assignments = distinct(flatten([
+    for account in var.account_assignments : [
+      for permission in account.permissions : [
+        for user in permission.users : {
+          index : lower("${account.account_name}/${permission.permission_set_name}/${user}")
+          account_name : account.account_name
+          account_id : account.account_id
+          permission_set : permission.permission_set_name
+          user_name : user
+        }
+      ]
+    ]
+  ]))
+}
+
+resource "aws_ssoadmin_account_assignment" "idc_users" {
+  for_each = {
+    for user in local.user_assignments : user.index => user
+  }
+
+  instance_arn       = local.identity_store_arn
+  permission_set_arn = aws_ssoadmin_permission_set.idc_ps[each.value.permission_set].arn
+
+  principal_id   = try(local.identity_store_users[each.value.user_name], "user_does_not_exist")
+  principal_type = "USER"
+
+  target_id   = each.value.account_id
+  target_type = "AWS_ACCOUNT"
+  
+  lifecycle {
+    # Permission_set must exist in var.permission_sets
+    precondition {
+      condition     = contains([for set in var.permission_sets : set.name], each.value.permission_set)
+      error_message = "Permission set \"${each.value.permission_set}\" is missing in \"var.permission_sets\"."
+    }
+
+    # User must exist in local.identity_store_users
+    precondition {
+      condition     = try(local.identity_store_users[each.value.user_name], "user_does_not_exist") != "user_does_not_exist"
+      error_message = "User \"${each.value.user_name}\" is missing in identity store."
+    }
+  }
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# ¦ SSO PERMISSION SETS
+# ¦ IDC ACCOUNT ASSIGNMENTS - GROUPS
 # ---------------------------------------------------------------------------------------------------------------------
-module "sso_permission_sets" {
-  source = "./modules/permission-set"
 
-  for_each = { for p in var.permission_sets : p.name => p }
 
-  identity_store_arn = local.identity_store_arn
-  name               = each.value.name
-  description        = each.value.description
-  session_duration   = each.value.session_duration
-  inline_policy_json = each.value.inline_policy_json
-  managed_policies   = each.value.managed_policies
-  boundary_policy    = each.value.boundary_policy
+data "aws_identitystore_group" "sso" {
+  for_each = { for group in local.groups_nested : group.index => group.group_name }
+
+  identity_store_id = local.identity_store_id
+
+  alternate_identifier {
+    unique_attribute {
+      attribute_path  = "DisplayName"
+      attribute_value = each.value
+    }
+  }
 }
 
-# ---------------------------------------------------------------------------------------------------------------------
-# ¦ SSO ACCOUNT ASSIGNMENTS
-# ---------------------------------------------------------------------------------------------------------------------
-module "sso_account_assignments" {
-  source = "./modules/account-assignment"
+resource "aws_ssoadmin_account_assignment" "idc_groups" {
+  for_each = {
+    for group in local.group_assignments : group.index => group
+    if var.group_id_map_mapping != null ? contains(keys(var.group_id_map_mapping), group.group_name) : contains(keys(data.aws_identitystore_group.idc_get_group), lower(group.group_name))
+  }
 
-  for_each = { for a in var.account_assignments : a.account_id => a }
+  instance_arn       = local.identity_store_arn
+  permission_set_arn = aws_ssoadmin_permission_set.idc_ps[each.value.permission_set].arn
 
-  identity_store_id  = local.identity_store_id
-  identity_store_arn = local.identity_store_arn
-  account_id         = each.value.account_id
-  permissions        = each.value.permissions
+  principal_id   = var.group_id_map_mapping != null ? var.group_id_map_mapping[each.value.group_name] : try(local.identity_store_groups[lower(each.value.group_name)], "group_does_not_exist")
+  principal_type = "GROUP"
 
-  depends_on = [
-    module.sso_permission_sets
-  ]
+  target_id   = each.value.account_id
+  target_type = "AWS_ACCOUNT"
+  /*
+  lifecycle {
+    # Permission_set must exist in var.permission_sets
+    precondition {
+      condition     = contains([for set in var.permission_sets : set.name], each.value.permission_set)
+      error_message = "Permission set \"${each.value.permission_set}\" is missing in \"var.permission_sets\"."
+    }
+
+    # Group must exist in local.identity_store_users
+    precondition {
+      condition     = try(local.identity_store_groups[each.value.group_name], "group_does_not_exist") != "group_does_not_exist"
+      error_message = "Group \"${each.value.group_name}\" is missing in identity store."
+    }
+  }
+  */
 }
