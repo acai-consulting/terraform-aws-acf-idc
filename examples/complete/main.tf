@@ -100,7 +100,7 @@ locals {
   ]
 
   account_assignments = [
- {
+    {
       account_id = "992382728088" # ACAI AWS Testbed Core Security Account
       permissions = [
         {
@@ -117,7 +117,7 @@ locals {
           users               = ["contact@acai.gmbh"]
         }
       ]
-    }  
+    }
   ]
 }
 
