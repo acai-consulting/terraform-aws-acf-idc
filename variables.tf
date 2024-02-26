@@ -25,12 +25,12 @@ variable "permission_sets" {
   }
 
   validation {
-    condition     = alltrue([for ps in var.permission_sets : alltrue([for mp in ps.managed_policies : length(trim(mp.policy_name)) > 0])])
+    condition     = alltrue([for ps in var.permission_sets : alltrue([for mp in ps.managed_policies : length(mp.policy_name) > 0])])
     error_message = "Each managed policy must have a non-empty policy_name.\n"
   }
 
   validation {
-    condition     = alltrue([for ps in var.permission_sets : ps.relay_state == null || length(trim(ps.relay_state)) > 0])
+    condition     = alltrue([for ps in var.permission_sets : ps.relay_state != null || length(ps.relay_state) > 0])
     error_message = "If provided, each permission set's relay_state must not be empty.\n"
   }
 
@@ -40,17 +40,17 @@ variable "permission_sets" {
   }
 
   validation {
-    condition     = alltrue([for ps in var.permission_sets : alltrue([for mp in ps.managed_policies : (substr(trim(mp.managed_by), 0, 3) == "aws" || substr(trim(mp.managed_by), 0, 8) == "customer")])])
+    condition     = alltrue([for ps in var.permission_sets : alltrue([for mp in ps.managed_policies : (substr(mp.managed_by, 0, 3) == "aws" || substr(mp.managed_by, 0, 8) == "customer")])])
     error_message = "Each managed policy's managed_by field must start with 'aws' or 'customer'.\n"
   }
 
   validation {
-    condition     = alltrue([for ps in var.permission_sets : alltrue([for mp in ps.managed_policies : length(trim(mp.policy_name)) > 0])])
+    condition     = alltrue([for ps in var.permission_sets : alltrue([for mp in ps.managed_policies : length(mp.policy_name) > 0])])
     error_message = "Each boundary policy must have a non-empty policy_name.\n"
   }
 
   validation {
-    condition     = alltrue([for ps in var.permission_sets : alltrue([for mp in ps.managed_policies : can(regex("^/.*/$", mp.policy_path))])])
+    condition     = alltrue([for ps in var.permission_sets : alltrue([for mp in ps.managed_policies : can(regex("^\\/(.*\\/)?$", mp.policy_path))])])
     error_message = "Each managed policy's policy_path must start and end with '/'.\n"
   }
 
@@ -60,17 +60,17 @@ variable "permission_sets" {
   }
 
   validation {
-    condition     = alltrue([for ps in var.permission_sets : alltrue([for bp in ps.boundary_policies : (substr(trim(bp.managed_by), 0, 3) == "aws" || substr(trim(bp.managed_by), 0, 8) == "customer")])])
+    condition     = alltrue([for ps in var.permission_sets : alltrue([for bp in ps.boundary_policies : (substr(bp.managed_by, 0, 3) == "aws" || substr(bp.managed_by, 0, 8) == "customer")])])
     error_message = "Each managed policy's managed_by field must start with 'aws' or 'customer'.\n"
   }
 
   validation {
-    condition     = alltrue([for ps in var.permission_sets : alltrue([for bp in ps.boundary_policies : length(trim(bp.policy_name)) > 0])])
+    condition     = alltrue([for ps in var.permission_sets : alltrue([for bp in ps.boundary_policies : length(bp.policy_name) > 0])])
     error_message = "Each boundary policy must have a non-empty policy_name.\n"
   }
 
   validation {
-    condition     = alltrue([for ps in var.permission_sets : alltrue([for bp in ps.boundary_policies : can(regex("^/.*/$", bp.policy_path))])])
+    condition     = alltrue([for ps in var.permission_sets : alltrue([for bp in ps.boundary_policies : can(regex("^\\/(.*\\/)?$", bp.policy_path))])])
     error_message = "Each managed policy's policy_path must start and end with '/'.\n"
   }
 }
