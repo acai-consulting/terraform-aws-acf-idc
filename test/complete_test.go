@@ -20,10 +20,15 @@ func TestIdC(t *testing.T) {
 	terraform.InitAndApply(t, terraformTest)
 
 	testSuccess1Output := terraform.Output(t, terraformTest, "test_success_1")
-
 	t.Log(testSuccess1Output)
 	// Assert that 'test_success_1' equals "true"
 	assert.Equal(t, "true", testSuccess1Output, "The test_success_1 output is not true")
+
+	testSuccess2Output := terraform.Output(t, terraformTest, "test_success_2")
+	t.Log(testSuccess2Output)
+	// Assert that 'test_success_2' equals "true"
+	assert.Equal(t, "true", testSuccess2Output, "The test_success_2 output is not true")
+
 
 	terraform.Destroy(t, terraformTest)
 }
