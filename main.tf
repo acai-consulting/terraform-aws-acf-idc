@@ -7,7 +7,7 @@ terraform {
   required_providers {
     aws = {
       source                = "hashicorp/aws"
-      version               = "~> 5.0"
+      version               = ">= 4.47"
       configuration_aliases = []
     }
   }
@@ -223,16 +223,16 @@ data "aws_identitystore_group" "idc_groups" {
 }
 
 locals {
-  identity_store_groups = { for group in data.aws_identitystore_group.idc_groups : group.display_name => group.group_id }
+  identity_store_groups = { for group in data.aws_identitystore_group.idc_groups : lower(group.display_name) => group.group_id }
 
   group_assignments = distinct(flatten([
     for account in var.account_assignments : [
       for permission in account.permissions : [
         for group in permission.groups : {
-          index : lower("${account.account_id}/${permission.permission_set_name}/${group}"),
+          index : "${account.account_id}/${permission.permission_set_name}/${group}",
           account_id : account.account_id,
           permission_set : permission.permission_set_name,
-          group_name : group
+          group_name : lower(group)
         }
       ]
     ]
