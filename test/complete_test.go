@@ -28,7 +28,4 @@ func TestIdC(t *testing.T) {
 	t.Log(testSuccess2Output)
 	// Assert that 'test_success_2' equals "true"
 	assert.Equal(t, "true", testSuccess2Output, "The test_success_2 output is not true")
-
-
-	terraform.Destroy(t, terraformTest)
 }
