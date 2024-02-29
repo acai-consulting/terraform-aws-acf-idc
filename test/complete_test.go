@@ -2,6 +2,7 @@ package test
 
 import (
 	"testing"
+	"time" // Import the time package
 	"github.com/stretchr/testify/assert"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 )
