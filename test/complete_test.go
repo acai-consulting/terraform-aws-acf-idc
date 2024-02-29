@@ -16,7 +16,13 @@ func TestIdC(t *testing.T) {
 		Lock: true,
 	}
 
-	defer terraform.Destroy(t, terraformTest)
+	// Schedule the Terraform destroy to run after this function completes
+	defer func() {
+		t.Log("Waiting 4 minutes before destroy...")
+		time.Sleep(4 * time.Minute) // Wait for 3 minutes
+		terraform.Destroy(t, terraformTest)
+	}()
+	
 	terraform.InitAndApply(t, terraformTest)
 
 	testSuccess1Output := terraform.Output(t, terraformTest, "test_success_1")
