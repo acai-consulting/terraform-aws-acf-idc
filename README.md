@@ -1,4 +1,4 @@
-# terraform-aws-acf-idc Terraform module
+# terraform-aws-acf-idc-idp Terraform module
 
 <!-- LOGO -->
 <a href="https://acai.gmbh">    
@@ -8,13 +8,14 @@
 <!-- SHIELDS -->
 [![Maintained by acai.gmbh][acai-shield]][acai-url]
 [![Terraform Version][terraform-version-shield]][terraform-version-url]
+[![Latest Release][release-shield]][release-url]
 
 <!-- DESCRIPTION -->
 [Terraform][terraform-url] module to deploy IAM Identity Center resources to enable Single-Sign-On on AWS via an Identity Provider (e.g. Azure).
 
 <!-- ARCHITECTURE -->
 ## Architecture
-<img src="docs/acf-identity-center.png">
+<img src="./docs/acf-identity-center.png">
 
 <!-- REQUIREMENTS -->
 ## Requirements
@@ -111,13 +112,13 @@ module "aws_identity_center" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.10 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.47 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 5.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.47 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 5.0 |
 
 ## Modules
 
@@ -161,11 +162,12 @@ No modules.
 <!-- AUTHORS -->
 ## Authors
 
-This module is maintained by [ACAI GmbH][acai-url] with help from [these amazing contributors][contributors-url]
+This module is maintained by [ACAI GmbH][acai-url].
 
 <!-- LICENSE -->
 ## License
 
+See [LICENSE][license-url] for full details.
 
 <!-- COPYRIGHT -->
 <br />
