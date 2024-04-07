@@ -10,7 +10,6 @@ variable "settings" {
             lambda_name             = string
             execution_iam_role_name = string
             execution_iam_role_path = optional(string, "/")
-            execution_iam_role_arn  = string
           })
           crawled_account = object({
             iam_role_arn = string

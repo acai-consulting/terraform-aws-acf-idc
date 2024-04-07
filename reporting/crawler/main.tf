@@ -74,7 +74,7 @@ data "aws_iam_policy_document" "lambda_policy" {
     actions = [
       "sts:AssumeRole"
     ]
-    resources = [local.settings.crawler.execution_iam_role_arn]
+    resources = [local.settings.crawled_account.iam_role_arn]
   }
 
   dynamic "statement" {

@@ -14,3 +14,8 @@ output "core_configuration_to_write" {
     }
   }
 }
+
+output "idc_crawler_role_arn" {
+  description = "ARN of the IAM ROle to crawl IdC"
+  value = aws_iam_role.idc_crawler_role.arn
+}

@@ -54,7 +54,7 @@ def lambda_handler(event, context):
         
         return {
             'statusCode': 200,
-            'body': "Success"
+            'body': transformed
         }
 
     except ClientError as e:
