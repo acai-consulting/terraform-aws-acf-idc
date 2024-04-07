@@ -72,7 +72,7 @@ locals {
       reporting = {
         identity_center = {
           crawler = {
-            lambda_name = "report--identity-center"
+            lambda_name             = "report--identity-center"
             execution_iam_role_name = "report--identity-center--execution-role"
           }
           crawled_account = {
@@ -88,7 +88,7 @@ locals {
 module "idc_crawler_role" {
   source = "../../reporting/principal"
 
-  settings      = {
+  settings = {
     security = {
       reporting = {
         identity_center = {
@@ -113,7 +113,7 @@ module "idc_report" {
       reporting = {
         identity_center = {
           crawler = {
-            lambda_name = "report--identity-center"
+            lambda_name             = "report--identity-center"
             execution_iam_role_name = "report--identity-center--execution-role"
           }
           crawled_account = {
@@ -130,7 +130,7 @@ module "idc_report" {
 
 
 resource "aws_lambda_invocation" "idc_report" {
-  function_name ="report--identity-center"
+  function_name = "report--identity-center"
 
   input = <<JSON
 {
