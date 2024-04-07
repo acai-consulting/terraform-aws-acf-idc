@@ -56,6 +56,7 @@ resource "aws_iam_role_policy" "idc_crawler_role_permissions" {
   policy = data.aws_iam_policy_document.idc_crawler_role_permissions.json
 }
 
+#tfsec:ignore:avd-aws-0057
 data "aws_iam_policy_document" "idc_crawler_role_permissions" {
   statement {
     sid    = "AllowOrgMgmt"

@@ -67,7 +67,6 @@ resource "aws_iam_role_policy" "lambda_policy" {
   policy = data.aws_iam_policy_document.lambda_policy.json
 }
 
-#tfsec:ignore:avd-aws-0057
 data "aws_iam_policy_document" "lambda_policy" {
   statement {
     sid    = "AllowAssumeRole"
