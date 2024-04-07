@@ -7,7 +7,7 @@ output "core_configuration_to_write" {
       reporting = {
         identity_center = {
           crawler = {
-            iam_role_arn = module.lambda.lambda_execution_role_arn
+            iam_role_arn = module.icd_report.execution_iam_role.arn
           }
         }
       }

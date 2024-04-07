@@ -41,4 +41,11 @@ func TestIdC(t *testing.T) {
 
 	idcReportResult := terraform.Output(t, terraformCrawler, "idc_report_lambda_result")
 	t.Log(idcReportResult)
+
+	// Extract the statusCode and assert it
+	statusCode := idcReportResult["statusCode"]
+	// Print the status code
+	t.Logf("Derived StatusCode: %s", statusCode)
+	assert.Equal(t, "200", statusCode, "Expected statusCode to be 200")
+
 }

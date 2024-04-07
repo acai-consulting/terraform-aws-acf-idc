@@ -8,6 +8,7 @@ variable "settings" {
         identity_center = optional(object({
           crawler = object({
             lambda_name             = string
+            lambda_description      = string
             execution_iam_role_name = string
             execution_iam_role_path = optional(string, "/")
           })
