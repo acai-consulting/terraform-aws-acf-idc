@@ -30,9 +30,8 @@ locals {
 # ¦ LAMBDA
 # ---------------------------------------------------------------------------------------------------------------------
 module "icd_report" {
-  /*  source  = "acai-consulting/lambda/aws"
-  version = "1.1.0"*/
-  source = "git::https://github.com/acai-consulting/terraform-aws-lambda.git?ref=fix_permission_policy_json_list"
+  source  = "acai-consulting/lambda/aws"
+  version = "1.1.1"
 
   lambda_settings = {
     function_name = local.settings.crawler.lambda_name
