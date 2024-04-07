@@ -41,7 +41,7 @@ data "aws_iam_policy_document" "idc_crawler_role_trust" {
     sid    = "TrustPolicy"
     effect = "Allow"
     principals {
-      type = "AWS"
+      type        = "AWS"
       identifiers = local.settings.iam_role_trustees
     }
     actions = [
