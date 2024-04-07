@@ -30,7 +30,7 @@ locals {
 # ¦ LAMBDA
 # ---------------------------------------------------------------------------------------------------------------------
 module "icd_report" {
-/*  source  = "acai-consulting/lambda/aws"
+  /*  source  = "acai-consulting/lambda/aws"
   version = "1.1.0"*/
   source = "git::https://github.com/acai-consulting/terraform-aws-lambda.git?ref=fix_permission_policy_json_list"
 
@@ -51,8 +51,8 @@ module "icd_report" {
   }
   execution_iam_role_settings = {
     new_iam_role = {
-      name = local.settings.crawler.execution_iam_role_name
-      path = local.settings.crawler.execution_iam_role_path
+      name                        = local.settings.crawler.execution_iam_role_name
+      path                        = local.settings.crawler.execution_iam_role_path
       permission_policy_json_list = [data.aws_iam_policy_document.lambda_policy.json]
     }
   }
