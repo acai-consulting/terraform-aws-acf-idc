@@ -39,7 +39,7 @@ func TestIdC(t *testing.T) {
 	defer terraform.Destroy(t, terraformReporting)
 	terraform.InitAndApply(t, terraformReporting)
 
-	idcReportResult := terraform.Output(t, terraformReporting, "idc_report_lambda_result")
+	idcReportResult := terraform.OutputMap(t, terraformReporting, "idc_report_lambda_result")
 	t.Log(idcReportResult)
 
 	// Extract the statusCode and assert it
