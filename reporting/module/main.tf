@@ -29,27 +29,30 @@ locals {
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ LAMBDA
 # ---------------------------------------------------------------------------------------------------------------------
-module "lambda" {
-  source  = "nuvibit/lambda/aws"
-  version = "~> 1.7"
+module "icd_report" {
+  source  = "acai-consulting/lambda/aws"
+  version = "1.1.0"
 
-  function_name           = local.settings.crawler.lambda_name
-  iam_execution_role_name = local.settings.crawler.execution_iam_role_name
-  iam_execution_role_path = local.settings.crawler.execution_iam_role_path
-
-  architecture        = var.lambda_settings.architecture
-  runtime             = var.lambda_settings.runtime
-  package_source_path = "${path.module}/lambda-files"
-  handler             = "main.lambda_handler"
-  environment_variables = {
-    LOG_LEVEL          = var.lambda_settings.log_level
-    CRAWLER_ARN        = local.settings.crawled_account.iam_role_arn
-    REPORT_BUCKET_NAME = var.settings.security.reporting.bucket_name
+  lambda_settings = {
+    function_name = local.settings.crawler.lambda_name
+    handler       = "main.lambda_handler"
+    config        = var.lambda_settings
+    tracing_mode  = var.lambda_settings.tracing_mode
+    environment_variables = {
+      LOG_LEVEL          = var.lambda_settings.log_level
+      CRAWLER_ARN        = local.settings.crawled_account.iam_role_arn
+      REPORT_BUCKET_NAME = var.settings.security.reporting.bucket_name
+    }
+    package = {
+      source_path = "${path.module}/lambda-files"
+    }
   }
-  memory_size           = var.lambda_settings.memory_size
-  timeout               = var.lambda_settings.timeout
-  log_retention_in_days = var.lambda_settings.log_retention_in_days
-  tracing_mode          = try(var.lambda_settings.tracing_mode, "Active")
+  execution_iam_role_settings = {
+    new_iam_role = {
+      name = local.settings.crawler.execution_iam_role_name
+      path = local.settings.crawler.execution_iam_role_path
+    }
+  }
 
   resource_tags = local.resource_tags
 }
@@ -59,7 +62,7 @@ module "lambda" {
 # ¦ LAMBDA EXECUTION POLICY
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_iam_role_policy" "lambda_policy" {
-  name   = replace(module.lambda.lambda_execution_role_name, "role", "policy")
+  name   = replace(module.icd_report.execution_iam_role.name, "role", "policy")
   role   = module.lambda.lambda_execution_role_name
   policy = data.aws_iam_policy_document.lambda_policy.json
 }

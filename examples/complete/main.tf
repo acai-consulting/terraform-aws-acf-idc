@@ -130,3 +130,16 @@ module "aws_identity_center" {
   permission_sets     = local.permission_sets
   account_assignments = local.account_assignments
 }
+
+# ---------------------------------------------------------------------------------------------------------------------
+# ¦ AWS IAM IDENTITY CENTER REPORTING
+# ---------------------------------------------------------------------------------------------------------------------
+module "aws_identity_center" {
+  source = "../../reporting/module"
+
+  settings = {
+    security = {
+      reporting = {}
+    }
+  }
+}

@@ -29,16 +29,16 @@ variable "lambda_settings" {
   type = object({
     architecture          = optional(string, "arm64")
     runtime               = optional(string, "python3.12")
-    log_level             = optional(string, "INFO") # Logging level, e.g. "INFO"
-    log_retention_in_days = optional(number, 7)      # Retention period for log files, in days
-    memory_size           = optional(number, 512)    # Size of the memory, in MB
     timeout               = optional(number, 720)    # Timeout for the function, in seconds
+    memory_size           = optional(number, 512)    # Size of the memory, in MB
+    log_retention_in_days = optional(number, 7)      # Retention period for log files, in days
+    log_level             = optional(string, "INFO") # Logging level, e.g. "INFO"
     tracing_mode          = optional(string, "Active")
   })
 
   default = {
-    architecture          = "arm64"
     runtime               = "python3.12"
+    architecture          = "arm64"
     log_level             = "INFO"
     log_retention_in_days = 7
     memory_size           = 512

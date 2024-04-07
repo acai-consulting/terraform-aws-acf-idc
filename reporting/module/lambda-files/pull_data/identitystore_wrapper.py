@@ -69,6 +69,7 @@ class IdentitystoreWrapper:
         self._fill_user_cache()
         self._fill_group_cache()
 
+    # ¦ _fill_user_cache
     def _fill_user_cache(self):
         logging.info("Fetching all users.")
         try:
@@ -79,6 +80,7 @@ class IdentitystoreWrapper:
         except Exception as e:
             logging.error(f"Failed to fetch users: {e}")
 
+    # ¦ _fill_group_cache
     def _fill_group_cache(self):
         logging.info("Fetching all groups.")
         try:

@@ -14,6 +14,7 @@ class SsoAdminWrapper:
         
         self.instance_arn, self.identitystore_id = self._initialize_instance(sso_admin_instance)
 
+    # ¦ _initialize_instance
     def _initialize_instance(self, instance: Optional[Dict]) -> Tuple[str, str]:
         """Fetches the first SSO instance if not provided."""
         if instance is None:
@@ -26,6 +27,7 @@ class SsoAdminWrapper:
         
         return instance.get('InstanceArn', ''), instance.get('IdentityStoreId', '')
 
+    # ¦ get_assignments
     def get_assignments(self, permissionsets_in_scope: Optional[List[str]] = None) -> Dict:
         """Fetches assignments for all or specified permission sets."""
         permission_sets = self._load_all_permissionsets(permissionsets_in_scope)
@@ -36,6 +38,7 @@ class SsoAdminWrapper:
                     account_info["assignments"] = self._get_account_assignments_for_permissionset(permissionset_arn, account_info['id'])
         return permission_sets 
 
+    # ¦ _load_all_permissionsets
     def _load_all_permissionsets(self, permissionsets_in_scope: Optional[List[str]] = None) -> Dict:
         """Loads all permission sets, optionally filtered by scope."""
         logging.info('Retrieving all Permission Sets.')
@@ -52,6 +55,7 @@ class SsoAdminWrapper:
             logging.error(f"Error loading permission sets: {e}")
         return permission_sets
 
+    # ¦ _describe_permission_set
     def _describe_permission_set(self, permission_set_arn: str) -> Dict:
         """Describes a single permission set."""
         try:
@@ -63,6 +67,7 @@ class SsoAdminWrapper:
             logging.error(f"Error describing permission set {permission_set_arn}: {e}")
             return {}
 
+    # ¦ _format_permission_set
     def _format_permission_set(self, permission_set: Dict) -> Dict:
         """Formats permission set details for consistent output."""
         return {
@@ -73,6 +78,7 @@ class SsoAdminWrapper:
             'relay_state': permission_set.get('RelayState', '')
         }
 
+    # ¦ _get_accounts_for_permissionset
     def _get_accounts_for_permissionset(self, permission_set_arn: str) -> List[Dict]:
         """Fetches accounts associated with a permission set."""
         accounts = []
@@ -91,7 +97,6 @@ class SsoAdminWrapper:
         except Exception as e:
             logging.error(f"Error describing accounts for permission set {permission_set_arn}: {e}")
             return []
-
 
     # ¦ _get_account_assignments_for_permissionset
     def _get_account_assignments_for_permissionset(self, permission_set_arn: str, account_id: str) -> Dict[str, List[str]]:
