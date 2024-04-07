@@ -67,6 +67,7 @@ resource "aws_iam_role_policy" "lambda_policy" {
   policy = data.aws_iam_policy_document.lambda_policy.json
 }
 
+#tfsec:ignore:avd-aws-0057
 data "aws_iam_policy_document" "lambda_policy" {
   statement {
     sid    = "AllowAssumeRole"
@@ -87,8 +88,7 @@ data "aws_iam_policy_document" "lambda_policy" {
         "s3:PutObject",
       ]
       resources = [
-        format("arn:aws:s3:::%s", var.settings.security.reporting.bucket_name),
-        format("arn:aws:s3:::%s/*", var.settings.security.reporting.bucket_name),
+        format("arn:aws:s3:::%s/idc-reports/*", var.settings.security.reporting.bucket_name)
       ]
     }
   }
