@@ -30,8 +30,8 @@ terraform {
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ DATA
 # ---------------------------------------------------------------------------------------------------------------------
-data "aws_region" "current" {provider = aws.org_mgmt}
-data "aws_caller_identity" "current" {provider = aws.org_mgmt}
+data "aws_region" "current" { provider = aws.org_mgmt }
+data "aws_caller_identity" "current" { provider = aws.org_mgmt }
 
 
 # ---------------------------------------------------------------------------------------------------------------------
