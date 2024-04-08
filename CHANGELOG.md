@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0](https://github.com/acai-consulting/terraform-aws-acf-idc/compare/1.0.0...1.1.0) (2024-04-08)
+
+
+### Features
+
+* V1.1.0 ([#4](https://github.com/acai-consulting/terraform-aws-acf-idc/issues/4)) ([220866a](https://github.com/acai-consulting/terraform-aws-acf-idc/commit/220866a950b49e788cecfd9c43abaaeef48ac22e))
+
 ## 1.0.0 (2024-04-08)
 
 
