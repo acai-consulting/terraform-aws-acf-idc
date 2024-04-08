@@ -11,21 +11,21 @@ func TestIdC(t *testing.T) {
 	// retryable errors in terraform testing.
 	t.Log("Starting ACF AWS IcD Module test")
 
-	terraformCrawler := &terraform.Options{
-		TerraformDir: "../examples/crawler",
+	terraformIdC := &terraform.Options{
+		TerraformDir: "../examples/identity-center",
 		NoColor:      false,
 		Lock:         true,
 	}
 
-	defer terraform.Destroy(t, terraformCrawler)
-	terraform.InitAndApply(t, terraformCrawler)
+	defer terraform.Destroy(t, terraformIdC)
+	terraform.InitAndApply(t, terraformIdC)
 
-	testSuccess1Output := terraform.Output(t, terraformCrawler, "test_success_1")
+	testSuccess1Output := terraform.Output(t, terraformIdC, "test_success_1")
 	t.Log(testSuccess1Output)
 	// Assert that 'test_success_1' equals "true"
 	assert.Equal(t, "true", testSuccess1Output, "The test_success_1 output is not true")
 
-	testSuccess2Output := terraform.Output(t, terraformCrawler, "test_success_2")
+	testSuccess2Output := terraform.Output(t, terraformIdC, "test_success_2")
 	t.Log(testSuccess2Output)
 	// Assert that 'test_success_2' equals "true"
 	assert.Equal(t, "true", testSuccess2Output, "The test_success_2 output is not true")
