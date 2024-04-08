@@ -152,9 +152,7 @@ module "idc_report" {
       reporting = {
         identity_center = {
           crawler = {
-            lambda_name             = "report--identity-center"
-            lambda_description      = "report--identity-center"
-            execution_iam_role_name = "report--identity-center--execution-role"
+            lambda_name = "report--identity-center"
           }
           crawled_account = {
             iam_role_arn = module.idc_crawler_role.idc_crawler_role_arn
