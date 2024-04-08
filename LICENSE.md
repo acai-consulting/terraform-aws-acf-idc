@@ -12,13 +12,13 @@ The Business Source License is not an Open Source license. However, the Licensed
 2. By default, BSL does not allow for production use unless the licensor provides a limited right as an **Additional Use Grant** – this piece is customizable and explained below.
 3. BSL provides a **Change Date** usually between one to four years in which the BSL license converts to a **Change License** that is open source, which can be GNU General Public License (GPL), GNU Affero General Public License (AGPL), Apache, etc.
 
-|                    |                                                                                                  |
-|--------------------|--------------------------------------------------------------------------------------------------|
-| **Licensor**       | ACAI GmbH, Switzerland                                                                           |
-| **Licensed Work**  | ACF (ACAI Cloud Foundation) 0.0.1 or later. The Licensed Work is © 2024 ACAI GmbH                |
-| **Additional Use Grant** | At ACAI, we have defined our Additional Use Grant to allow BSL-licensed ACF source code to be deployed, for any purpose (e.g. production) as long as you are not (i) creating a commercial derivative work or (ii) offering or including it in a commercial product, application or service (e.g. Consulting, SaaS). |
-| **Change Date**    | Four years from the date the Licensed Work is published.                                         |
-| **Change License** | MPL 2.0                                                                                          |
+|                    |                                                                                                     |
+|--------------------|-----------------------------------------------------------------------------------------------------|
+| **Licensor**       | ACAI GmbH, Switzerland                                                                              |
+| **Licensed Work**  | ACF (ACAI Cloud Foundation) 0.0.1 or later. The Licensed Work is copyrighted (c) 2024 by ACAI GmbH  |
+| **Additional Use Grant** | Production use of the Licensed Work is permitted solely under the condition that such use is accompanied by the purchase of consulting services or solutions from ACAI Consulting. The Licensed Work may not be offered to third parties in the form of consulting, managed services, or any other service that utilizes the Licensed Work in a manner that constitutes a competitive offering. For the purposes of this license, a "competitive offering" refers to any product, solution, or service that is made available to third parties, particularly on a paid basis, which includes but is not limited to consulting services, paid support arrangements, or managed services that incorporate the Licensed Work. |
+| **Change Date**    | Four years from the date the Licensed Work is published.                                            |
+| **Change License** | Mozilla Public License 2.0 (MPL 2.0)                                                                |
 
 For information about alternative licensing arrangements for the Licensed Work, please contact <contact@acai.gmbh>.
 

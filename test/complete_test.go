@@ -1,31 +1,51 @@
 package test
 
 import (
+	"log"
 	"testing"
-	"github.com/stretchr/testify/assert"
+	"time"
+
 	"github.com/gruntwork-io/terratest/modules/terraform"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestIdC(t *testing.T) {
-	// retryable errors in terraform testing.
 	t.Log("Starting ACF AWS IcD Module test")
 
-	terraformTest := &terraform.Options{
+	terraformIdC := &terraform.Options{
 		TerraformDir: "../examples/complete",
-		NoColor: false,
-		Lock: true,
+		NoColor:      false,
+		Lock:         true,
 	}
 
-	defer terraform.Destroy(t, terraformTest)
-	terraform.InitAndApply(t, terraformTest)
+	// Initialize and apply Terraform configuration
+	_, err := terraform.InitAndApplyE(t, terraformIdC)
+	if err != nil {
+		t.Fatalf("Failed to apply Terraform: %v", err)
+	}
 
-	testSuccess1Output := terraform.Output(t, terraformTest, "test_success_1")
-	t.Log(testSuccess1Output)
-	// Assert that 'test_success_1' equals "true"
+	testSuccess1Output := terraform.Output(t, terraformIdC, "test_success_1")
 	assert.Equal(t, "true", testSuccess1Output, "The test_success_1 output is not true")
 
-	testSuccess2Output := terraform.Output(t, terraformTest, "test_success_2")
-	t.Log(testSuccess2Output)
-	// Assert that 'test_success_2' equals "true"
+	testSuccess2Output := terraform.Output(t, terraformIdC, "test_success_2")
 	assert.Equal(t, "true", testSuccess2Output, "The test_success_2 output is not true")
+
+	idcReportResult := terraform.OutputMap(t, terraformIdC, "idc_report")
+	statusCode := idcReportResult["statusCode"]
+	assert.Equal(t, "200", statusCode, "Expected statusCode to be 200")
+
+	// Try to explicitly destroy the IdC infrastructure and log error if it fails
+	_, err = terraform.DestroyE(t, terraformIdC)
+	if err != nil {
+		log.Printf("Error during Terraform destroy: %v", err)
+	}
+
+	time.Sleep(10 * time.Second) // Wait for 10 seconds before trying again
+
+	// Ensure infrastructure is defenetly destroyed at the end of the test
+	defer func() {
+		if _, err := terraform.DestroyE(t, terraformIdC); err != nil {
+			log.Printf("Error during Terraform destroy: %v", err)
+		}
+	}()
 }

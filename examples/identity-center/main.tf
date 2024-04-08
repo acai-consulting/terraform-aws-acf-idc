@@ -27,12 +27,12 @@ terraform {
   }
 }
 
-
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ DATA
 # ---------------------------------------------------------------------------------------------------------------------
 data "aws_region" "current" { provider = aws.org_mgmt }
 data "aws_caller_identity" "current" { provider = aws.org_mgmt }
+
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ LOCALS
@@ -117,71 +117,3 @@ module "aws_identity_center" {
     aws = aws.org_mgmt
   }
 }
-
-# ---------------------------------------------------------------------------------------------------------------------
-# ¦ AWS IAM IDENTITY CENTER REPORTING
-# ---------------------------------------------------------------------------------------------------------------------
-module "idc_crawler_role" {
-  source = "../../reporting/principal"
-
-  settings = {
-    security = {
-      reporting = {
-        identity_center = {
-          crawled_account = {
-            iam_role_name     = "reporting-idc-crawler-role"
-            iam_role_trustees = ["992382728088"] # Core Security Account ID
-          }
-        }
-      }
-    }
-  }
-  providers = {
-    aws = aws.org_mgmt
-  }
-  depends_on = [
-    module.aws_identity_center
-  ]
-}
-
-module "idc_report" {
-  source = "../../reporting/crawler"
-
-  settings = {
-    security = {
-      reporting = {
-        identity_center = {
-          crawler = {
-            lambda_name             = "report--identity-center"
-            lambda_description      = "report--identity-center"
-            execution_iam_role_name = "report--identity-center--execution-role"
-          }
-          crawled_account = {
-            iam_role_arn = module.idc_crawler_role.idc_crawler_role_arn
-          }
-        }
-      }
-    }
-  }
-  lambda_settings = {
-    runtime = "python3.10"
-  }
-  providers = {
-    aws = aws.core_security
-  }
-}
-
-
-resource "aws_lambda_invocation" "idc_report" {
-  function_name = "report--identity-center"
-
-  input = <<JSON
-{
-}
-JSON
-  depends_on = [
-    module.idc_report
-  ]
-  provider = aws.core_security
-}
-
