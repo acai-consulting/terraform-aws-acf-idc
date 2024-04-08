@@ -139,7 +139,7 @@ module "idc_crawler_role" {
   providers = {
     aws = aws.org_mgmt
   }
-  depends_on = [ 
+  depends_on = [
     module.aws_identity_center
   ]
 }
