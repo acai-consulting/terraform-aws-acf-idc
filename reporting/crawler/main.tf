@@ -36,7 +36,6 @@ module "icd_report" {
   lambda_settings = {
     function_name = local.settings.crawler.lambda_name
     description   = local.settings.crawler.lambda_description
-    handler       = "main.lambda_handler"
     config        = var.lambda_settings
     tracing_mode  = var.lambda_settings.tracing_mode
     environment_variables = {
