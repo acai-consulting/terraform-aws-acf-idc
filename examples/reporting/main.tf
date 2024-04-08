@@ -69,6 +69,9 @@ module "idc_report" {
       }
     }
   }
+  lambda_settings = {
+    runtime = "python3.10"
+  }
   providers = {
     aws = aws.core_security
   }
