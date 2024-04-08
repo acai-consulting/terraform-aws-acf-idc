@@ -16,7 +16,7 @@
 
 <!-- ARCHITECTURE -->
 ## Architecture
-<img src="./docs/acf-identity-center.png">
+![architecture](https://raw.githubusercontent.com/acai-consulting/terraform-aws-acf-idc/main/docs/acf_identity_center.svg)
 
 <!-- REQUIREMENTS -->
 ## Requirements
@@ -181,9 +181,7 @@ See [LICENSE][license-url] for full details.
 [terraform-version-shield]: https://img.shields.io/badge/tf-%3E%3D1.3.10-blue.svg?style=flat&color=blueviolet
 [terraform-version-url]: https://www.terraform.io/upgrade-guides/1-3-10.html
 [release-shield]: https://img.shields.io/github/v/release/acai-consulting/terraform-aws-acf-idc?style=flat&color=success
-[architecture-png]: https://github.com/acai-consulting/terraform-aws-acf-idc/blob/main/docs/architecture.png?raw=true
 [release-url]: https://github.com/acai-consulting/terraform-aws-acf-idc/releases
-[contributors-url]: https://github.com/acai-consulting/terraform-aws-acf-idc/graphs/contributors
 [license-url]: https://github.com/acai-consulting/terraform-aws-acf-idc/tree/main/LICENSE
 [terraform-url]: https://www.terraform.io
 [aws-url]: https://aws.amazon.comterraform-aws-acf-idc/tree/main/examples/complete
