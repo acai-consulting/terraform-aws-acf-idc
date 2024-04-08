@@ -2,6 +2,7 @@ package test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/assert"
@@ -47,5 +48,10 @@ func TestIdC(t *testing.T) {
 	// Print the status code
 	t.Logf("Derived StatusCode: %s", statusCode)
 	assert.Equal(t, "200", statusCode, "Expected statusCode to be 200")
+
+	// Explicitly destroy the IdC infrastructure - mitigate: error waiting for SSO Permission Set (arn:aws:sso:::permissionSet/ssoins-6987eff4f8663f8f/ps-3b5018dbc2c1002c) to provision: unexpected state 'FAILED', wanted target 'SUCCEEDED'.
+	terraform.Destroy(t, terraformIdC)
+	time.Sleep(10 * time.Second) // Wait for 10 seconds
+	terraform.Destroy(t, terraformIdC)
 
 }
