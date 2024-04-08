@@ -13,7 +13,7 @@ func TestIdC(t *testing.T) {
 	t.Log("Starting ACF AWS IcD Module test")
 
 	terraformIdC := &terraform.Options{
-		TerraformDir: "../examples/identity-center",
+		TerraformDir: "../examples/complete",
 		NoColor:      false,
 		Lock:         true,
 	}
@@ -30,18 +30,7 @@ func TestIdC(t *testing.T) {
 	testSuccess2Output := terraform.Output(t, terraformIdC, "test_success_2")
 	assert.Equal(t, "true", testSuccess2Output, "The test_success_2 output is not true")
 
-	terraformReporting := &terraform.Options{
-		TerraformDir: "../examples/reporting",
-		NoColor:      false,
-		Lock:         true,
-	}
-
-	_, err = terraform.InitAndApplyE(t, terraformReporting)
-	if err != nil {
-		t.Fatalf("Failed to apply Terraform: %v", err)
-	}
-
-	idcReportResult := terraform.OutputMap(t, terraformReporting, "idc_report_lambda_result")
+	idcReportResult := terraform.OutputMap(t, terraformIdC, "idc_report")
 	statusCode := idcReportResult["statusCode"]
 	assert.Equal(t, "200", statusCode, "Expected statusCode to be 200")
 
@@ -53,16 +42,10 @@ func TestIdC(t *testing.T) {
 
 	time.Sleep(10 * time.Second) // Wait for 10 seconds before trying again
 
-	// Attempt to destroy again
-	_, err = terraform.DestroyE(t, terraformIdC)
-	if err != nil {
-		log.Printf("Error during the second attempt of Terraform destroy: %v", err)
-	}
-
-	// Ensure reporting infrastructure is also destroyed at the end of the test
+	// Ensure infrastructure is defenetly destroyed at the end of the test
 	defer func() {
-		if _, err := terraform.DestroyE(t, terraformReporting); err != nil {
-			log.Printf("Error during Terraform destroy for reporting: %v", err)
+		if _, err := terraform.DestroyE(t, terraformIdC); err != nil {
+			log.Printf("Error during Terraform destroy: %v", err)
 		}
 	}()
 }
