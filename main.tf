@@ -19,6 +19,15 @@ terraform {
 data "aws_ssoadmin_instances" "idc_instance" {}
 
 locals {
+  resource_tags = merge(
+    var.resource_tags,
+    {
+      "module_provider" = "ACAI GmbH",
+      "module_name"     = "terraform-aws-acf-idc",
+      "module_source"   = "github.com/acai-consulting/terraform-aws-acf-idc",
+      "module_version"  = /*inject_version_start*/ "1.2.2" /*inject_version_end*/
+    }
+  )
   identity_store_id  = tolist(data.aws_ssoadmin_instances.idc_instance.identity_store_ids)[0]
   identity_store_arn = tolist(data.aws_ssoadmin_instances.idc_instance.arns)[0]
 }
@@ -51,7 +60,7 @@ resource "aws_ssoadmin_permission_set" "idc_ps" {
   instance_arn     = local.identity_store_arn
   session_duration = "PT${each.value.session_duration_in_hours}H"
   relay_state      = each.value.relay_state
-  tags             = var.resource_tags
+  tags             = local.resource_tags
 }
 
 resource "aws_ssoadmin_managed_policy_attachment" "idc_ps_aws_managed" {

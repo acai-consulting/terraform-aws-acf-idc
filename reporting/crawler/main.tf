@@ -30,8 +30,9 @@ locals {
 # ¦ LAMBDA
 # ---------------------------------------------------------------------------------------------------------------------
 module "icd_report" {
+  #checkov:skip=CKV_TF_1
   source  = "acai-consulting/lambda/aws"
-  version = "1.1.1"
+  version = "1.1.6"
 
   lambda_settings = {
     function_name = local.settings.crawler.lambda_name
