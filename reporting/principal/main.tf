@@ -58,6 +58,7 @@ resource "aws_iam_role_policy" "idc_crawler_role_permissions" {
 
 #tfsec:ignore:avd-aws-0057
 data "aws_iam_policy_document" "idc_crawler_role_permissions" {
+  #checkov:skip=CKV_AWS_356 : readonly permissions
   statement {
     sid    = "AllowOrgMgmt"
     effect = "Allow"

@@ -30,6 +30,7 @@ locals {
 # ¦ LAMBDA
 # ---------------------------------------------------------------------------------------------------------------------
 module "icd_report" {
+  #checkov:skip=CKV_TF_1
   source  = "acai-consulting/lambda/aws"
   version = "1.1.6"
 
