@@ -37,7 +37,7 @@ func TestIdC(t *testing.T) {
 	// Try to explicitly destroy the IdC infrastructure and log error if it fails
 	_, err = terraform.DestroyE(t, terraformIdC)
 	if err != nil {
-		log.Printf("Error during Terraform destroy: %v", err)
+		log.Printf("Error during 1st Terraform destroy: %v", err)
 	}
 
 	time.Sleep(10 * time.Second) // Wait for 10 seconds before trying again

@@ -2,7 +2,11 @@
 
 <!-- SHIELDS -->
 [![Maintained by acai.gmbh][acai-shield]][acai-url]
-[![Terraform Version][terraform-version-shield]][terraform-version-url]
+![module-version-shield]
+![terraform-version-shield]
+![trivy-shield]
+![checkov-shield]
+[![Latest Release][release-shield]][release-url]
 
 <!-- LOGO -->
 <div style="text-align: right; margin-top: -60px;">
@@ -178,10 +182,13 @@ See [LICENSE][license-url] for full details.
 <!-- MARKDOWN LINKS & IMAGES -->
 [acai-url]: https://acai.gmbh
 [acai-shield]: https://img.shields.io/badge/maintained_by-acai.gmbh-CB224B?style=flat
+[module-version-shield]: https://img.shields.io/badge/module_version-1.1.4-CB224B?style=flat
 [terraform-version-shield]: https://img.shields.io/badge/tf-%3E%3D1.3.10-blue.svg?style=flat&color=blueviolet
 [terraform-version-url]: https://www.terraform.io/upgrade-guides/1-3-10.html
+[trivy-shield]: https://img.shields.io/badge/trivy-passed-green
+[checkov-shield]: https://img.shields.io/badge/checkov-passed-green
 [release-shield]: https://img.shields.io/github/v/release/acai-consulting/terraform-aws-acf-idc?style=flat&color=success
 [release-url]: https://github.com/acai-consulting/terraform-aws-acf-idc/releases
-[license-url]: https://github.com/acai-consulting/terraform-aws-acf-idc/tree/main/LICENSE
+[license-url]: https://github.com/acai-consulting/terraform-aws-acf-idc/tree/main/LICENSE.md
 [terraform-url]: https://www.terraform.io
 [aws-url]: https://aws.amazon.comterraform-aws-acf-idc/tree/main/examples/complete
