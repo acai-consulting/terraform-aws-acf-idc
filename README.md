@@ -184,11 +184,9 @@ See [LICENSE][license-url] for full details.
 [acai-shield]: https://img.shields.io/badge/maintained_by-acai.gmbh-CB224B?style=flat
 [module-version-shield]: https://img.shields.io/badge/module_version-1.1.1-CB224B?style=flat
 [terraform-version-shield]: https://img.shields.io/badge/tf-%3E%3D1.3.10-blue.svg?style=flat&color=blueviolet
-[terraform-version-url]: https://www.terraform.io/upgrade-guides/1-3-10.html
 [trivy-shield]: https://img.shields.io/badge/trivy-passed-green
 [checkov-shield]: https://img.shields.io/badge/checkov-passed-green
 [release-shield]: https://img.shields.io/github/v/release/acai-consulting/terraform-aws-acf-idc?style=flat&color=success
 [release-url]: https://github.com/acai-consulting/terraform-aws-acf-idc/releases
 [license-url]: https://github.com/acai-consulting/terraform-aws-acf-idc/tree/main/LICENSE.md
 [terraform-url]: https://www.terraform.io
-[aws-url]: https://aws.amazon.comterraform-aws-acf-idc/tree/main/examples/complete
