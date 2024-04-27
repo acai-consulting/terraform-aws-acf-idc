@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.2](https://github.com/acai-consulting/terraform-aws-acf-idc/compare/1.1.1...1.1.2) (2024-04-27)
+
+
+### Bug Fixes
+
+* rename CICD Manager template folder ([24dbf9b](https://github.com/acai-consulting/terraform-aws-acf-idc/commit/24dbf9b500ac5d30e78a65e83e70350290b7b52e))
+
 ## [1.1.1](https://github.com/acai-consulting/terraform-aws-acf-idc/compare/1.1.0...1.1.1) (2024-04-11)
 
 
