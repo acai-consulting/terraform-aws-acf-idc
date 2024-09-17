@@ -55,9 +55,9 @@ module "icd_report" {
     layer_arn_list = [
       aws_lambda_layer_version.idc_libraries_layer.arn
     ]
-    handler       = "main.lambda_handler"
-    config        = var.lambda_settings
-    tracing_mode  = var.lambda_settings.tracing_mode
+    handler      = "main.lambda_handler"
+    config       = var.lambda_settings
+    tracing_mode = var.lambda_settings.tracing_mode
     environment_variables = {
       LOG_LEVEL          = var.lambda_settings.log_level
       CRAWLER_ARN        = local.settings.crawled_account.iam_role_arn
