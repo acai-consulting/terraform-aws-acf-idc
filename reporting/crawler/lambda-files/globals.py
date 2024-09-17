@@ -57,19 +57,24 @@ def assume_remote_role(remote_role_arn, sts_region_name = None, customer_session
         return None
 
 def upload_file_to_s3( local_file_path, file_name):
-    s3_client = boto3.client('s3')
-    s3_bucket_name = REPORT_BUCKET_NAME
-    s3_key = f"{REPORT_BUCKET_FOLDER_NAME}/{file_name}"
-    s3_url = f"s3://{s3_bucket_name}/{s3_key}"
+    if REPORT_BUCKET_NAME != "":
+        s3_client = boto3.client('s3')
+        s3_bucket_name = REPORT_BUCKET_NAME
+        s3_key = f"{REPORT_BUCKET_FOLDER_NAME}/{file_name}"
+        s3_url = f"s3://{s3_bucket_name}/{s3_key}"
+        
+        LOGGER.info(f"Excel report will be uploaded to S3: {s3_url}")
+        
+        with open(local_file_path, 'rb') as content:
+            s3_client.put_object(
+                Bucket=s3_bucket_name, 
+                Key=s3_key, 
+                Body=content,
+            )
+        
+        LOGGER.info(f"Excel report has been uploaded to S3: {s3_url}")
+        return s3_url
     
-    LOGGER.info(f"Excel report will be uploaded to S3: {s3_url}")
-    
-    with open(local_file_path, 'rb') as content:
-        s3_client.put_object(
-            Bucket=s3_bucket_name, 
-            Key=s3_key, 
-            Body=content,
-        )
-    
-    LOGGER.info(f"Excel report has been uploaded to S3: {s3_url}")
-    return s3_url
+    else:
+        LOGGER.info(f"No output bucket provided.")
+        
