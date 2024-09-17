@@ -38,6 +38,9 @@ class ExcelReport:
 
         # Freeze the header row
         worksheet.freeze_panes(1, 0)
+        
+        # Apply the auto-filter to the first row (header row)
+        worksheet.autofilter(0, 0, 0, len(headers) - 1)  # Apply filter to the entire header row
 
         # Write the transformed data into the Excel worksheet
         row_num = 1  # Start after the header row
