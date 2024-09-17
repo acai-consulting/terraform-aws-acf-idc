@@ -27,16 +27,34 @@ locals {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
+# ¦ LAMBDA LAYER
+# ---------------------------------------------------------------------------------------------------------------------
+locals {
+  zip_folder = "${path.module}/lambda-layer/20-zipped/"
+}
+resource "aws_lambda_layer_version" "idc_libraries_layer" {
+  layer_name               = "acf_idc_libraries_layer"
+  filename                 = "${local.zip_folder}/idc_libraries_layer.zip"
+  compatible_runtimes      = [var.lambda_settings.runtime]
+  compatible_architectures = [var.lambda_settings.architecture]
+  source_code_hash         = filebase64sha256("${local.zip_folder}/idc_libraries_layer.zip")
+}
+
+
+# ---------------------------------------------------------------------------------------------------------------------
 # ¦ LAMBDA
 # ---------------------------------------------------------------------------------------------------------------------
 module "icd_report" {
   #checkov:skip=CKV_TF_1
   source  = "acai-consulting/lambda/aws"
-  version = "1.1.6"
+  version = "1.3.7"
 
   lambda_settings = {
     function_name = local.settings.crawler.lambda_name
     description   = local.settings.crawler.lambda_description
+    layer_arn_list = [
+      aws_lambda_layer_version.idc_libraries_layer.arn
+    ]
     handler       = "main.lambda_handler"
     config        = var.lambda_settings
     tracing_mode  = var.lambda_settings.tracing_mode
@@ -56,7 +74,6 @@ module "icd_report" {
       permission_policy_json_list = [data.aws_iam_policy_document.lambda_policy.json]
     }
   }
-
   resource_tags = local.resource_tags
 }
 

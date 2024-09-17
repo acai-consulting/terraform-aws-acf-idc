@@ -38,3 +38,11 @@ Production use of the Licensed Work, referring to the deployment and operation o
 **Change License**: Mozilla Public License 2.0 (MPL 2.0)
 
 For information about alternative licensing arrangements for the Licensed Work, please contact <contact@acai.gmbh>.
+
+### Third-Party Components
+
+The Licensed Work includes certain third-party components that are distributed under open-source licenses. These components are licensed separately under their respective licenses, and the use of such components is subject to the terms and conditions of their respective licenses. The following third-party component is included:
+
+**XlsxWriter**: Licensed under the BSD 3-Clause License. [Link](https://xlsxwriter.readthedocs.io/license.html)
+
+A copy of the BSD 3-Clause License can be found at [link to BSD 3-Clause License text].

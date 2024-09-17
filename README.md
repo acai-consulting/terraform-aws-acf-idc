@@ -1,12 +1,11 @@
-# terraform-aws-acf-idc-idp Terraform module
+# terraform-aws-acf-idc Terraform module
 
 <!-- SHIELDS -->
 [![Maintained by acai.gmbh][acai-shield]][acai-url]
-![module-version-shield]
+[![module-version-shield]][module-release-url]
 ![terraform-version-shield]
 ![trivy-shield]
 ![checkov-shield]
-[![Latest Release][release-shield]][release-url]
 
 <!-- LOGO -->
 <div style="text-align: right; margin-top: -60px;">
@@ -20,12 +19,15 @@
 
 <!-- ARCHITECTURE -->
 ## Architecture
+
 ![architecture](https://raw.githubusercontent.com/acai-consulting/terraform-aws-acf-idc/main/docs/acf_identity_center.svg)
 
 <!-- REQUIREMENTS -->
 ## Requirements
+
 | :exclamation: Please ensure that the following requirements are met |
 |-----------------------------------------|
+
 - Enable AWS Organizations and add AWS Accounts.
 - Enable IAM Identity Center (successor to AWS Single Sign-On).
 - Create identities in IAM Identity Center (Users and Groups) or connect to an external identity provider. [documentation](https://docs.aws.amazon.com/singlesignon/latest/userguide/manage-your-identity-source-idp.html)
@@ -33,6 +35,7 @@
 
 <!-- USAGE -->
 ## Usage
+
 ```hcl
 locals {
   permission_sets = [
@@ -183,10 +186,9 @@ See [LICENSE][license-url] for full details.
 [acai-url]: https://acai.gmbh
 [acai-shield]: https://img.shields.io/badge/maintained_by-acai.gmbh-CB224B?style=flat
 [module-version-shield]: https://img.shields.io/badge/module_version-1.1.3-CB224B?style=flat
+[module-release-url]: https://github.com/acai-consulting/terraform-aws-acf-idc/releases
 [terraform-version-shield]: https://img.shields.io/badge/tf-%3E%3D1.3.10-blue.svg?style=flat&color=blueviolet
 [trivy-shield]: https://img.shields.io/badge/trivy-passed-green
 [checkov-shield]: https://img.shields.io/badge/checkov-passed-green
-[release-shield]: https://img.shields.io/github/v/release/acai-consulting/terraform-aws-acf-idc?style=flat&color=success
-[release-url]: https://github.com/acai-consulting/terraform-aws-acf-idc/releases
 [license-url]: https://github.com/acai-consulting/terraform-aws-acf-idc/tree/main/LICENSE.md
 [terraform-url]: https://www.terraform.io
