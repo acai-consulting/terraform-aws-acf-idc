@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0](https://github.com/acai-consulting/terraform-aws-acf-idc/compare/1.1.3...1.2.0) (2024-09-17)
+
+
+### Features
+
+* Reporting to excel ([#8](https://github.com/acai-consulting/terraform-aws-acf-idc/issues/8)) ([d45a366](https://github.com/acai-consulting/terraform-aws-acf-idc/commit/d45a366de7363488019c4542d43bc63eb1424897))
+
 ## [1.1.3](https://github.com/acai-consulting/terraform-aws-acf-idc/compare/1.1.2...1.1.3) (2024-05-17)
 
 
