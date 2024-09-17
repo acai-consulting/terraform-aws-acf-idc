@@ -23,7 +23,7 @@ class ExcelReport:
 
         # Define the header format and write the headers
         header_format = workbook.add_format({'bold': True, 'align': 'center', 'valign': 'vcenter', 'bg_color': '#D3D3D3'})
-        headers = ['Account-ID', 'Account-Name', 'PermSet-Name', 'Group-Name', 'User-Name', 'Group-ID', 'User-ID']
+        headers = ['Account-ID', 'Account-Name', 'PermSet-Name', 'Group-Name', 'User-Name', 'User-Display-Name', 'Group-ID', 'User-ID']
         for col_num, header in enumerate(headers):
             worksheet.write(0, col_num, header, header_format)
 
@@ -33,8 +33,9 @@ class ExcelReport:
         worksheet.set_column('C:C', 30)  # PermSet-Name
         worksheet.set_column('D:D', 30)  # Group-Name
         worksheet.set_column('E:E', 30)  # User-Name
-        worksheet.set_column('F:F', 50)  # Group-ID
-        worksheet.set_column('G:G', 50)  # User-ID
+        worksheet.set_column('F:F', 30)  # User-Display-Name
+        worksheet.set_column('G:G', 50)  # Group-ID
+        worksheet.set_column('H:H', 50)  # User-ID
 
         # Freeze the header row
         worksheet.freeze_panes(1, 0)
@@ -55,14 +56,16 @@ class ExcelReport:
                     for user_id in group_details.get('assigned_users', []):
                         user_details = self.transformed['principals']['users'].get(user_id, {})
                         user_name = user_details.get('user_name', f'User-{user_id}')
-                        worksheet.write_row(row_num, 0, [account_id, account_info['account_name'], permission_set_name, group_name, user_name, group_id, user_id])
+                        user_display_name = user_details.get('display_name', f'User-{user_id}')
+                        worksheet.write_row(row_num, 0, [account_id, account_info['account_name'], permission_set_name, group_name, user_name, user_display_name, group_id, user_id])
                         row_num += 1
 
                 # Case for direct user assignments (without a group)
                 for user_id in permission_set_info.get('users', []):  
                     user_details = self.transformed['principals']['users'].get(user_id, {})
                     user_name = user_details.get('user_name', f'User-{user_id}')
-                    worksheet.write_row(row_num, 0, [account_id, account_info['account_name'], permission_set_name, '', user_name, '', user_id])
+                    user_display_name = user_details.get('display_name', f'User-{user_id}')
+                    worksheet.write_row(row_num, 0, [account_id, account_info['account_name'], permission_set_name, '', user_name, user_display_name, '', user_id])
                     row_num += 1
 
         # Close the workbook after writing all data
