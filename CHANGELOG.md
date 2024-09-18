@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.1](https://github.com/acai-consulting/terraform-aws-acf-idc/compare/1.2.0...1.2.1) (2024-09-18)
+
+
+### Bug Fixes
+
+* rename folder to acai-vecto ([#9](https://github.com/acai-consulting/terraform-aws-acf-idc/issues/9)) ([a9c89c5](https://github.com/acai-consulting/terraform-aws-acf-idc/commit/a9c89c512385186dce7b92ed81fa8eb1d80d0fd2))
+
 ## [1.2.0](https://github.com/acai-consulting/terraform-aws-acf-idc/compare/1.1.3...1.2.0) (2024-09-17)
 
 
