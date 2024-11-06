@@ -9,7 +9,8 @@ import globals
 from pull_data.ssoadmin_wrapper import SsoAdminWrapper
 from pull_data.identitystore_wrapper import IdentitystoreWrapper
 from transformer import Transformer
-from rendering.reporting import ExcelReport
+from rendering.csv import CSV
+from rendering.excel_report import ExcelReport
 
 
 REGION = os.environ['AWS_REGION']
@@ -41,6 +42,9 @@ def lambda_handler(event, context):
 
         reporting = ExcelReport(transformed)
         reporting.create_excel()
+
+        reporting_csv = CSV(transformed)
+        reporting_csv.render()       
         
         return {
             'statusCode': 200,
