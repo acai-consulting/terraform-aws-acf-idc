@@ -67,17 +67,18 @@ class ExcelReport:
                     row_num += 1
 
         # Add the second worksheet for group and user summary
-        worksheet_summary = workbook.add_worksheet("Group-User Summary")
+        worksheet_group_user = workbook.add_worksheet("Group-User Summary")
         headers_summary = ['Group-Name', 'User-Name', 'Group-ID', 'User-ID']
         
         for col_num, header in enumerate(headers_summary):
-            worksheet_summary.write(0, col_num, header, header_format)
+            worksheet_group_user.write(0, col_num, header, header_format)
 
-        worksheet_summary.set_column('A:A', 30)  # Group-Name
-        worksheet_summary.set_column('B:B', 30)  # User-Name
-        worksheet_summary.set_column('C:C', 50)  # Group-ID
-        worksheet_summary.set_column('D:D', 50)  # User-ID
-        worksheet_summary.freeze_panes(1, 0)
+        worksheet_group_user.set_column('A:A', 30)  # Group-Name
+        worksheet_group_user.set_column('B:B', 30)  # User-Name
+        worksheet_group_user.set_column('C:C', 30)  # User-Display-Name
+        worksheet_group_user.set_column('D:D', 50)  # Group-ID
+        worksheet_group_user.set_column('E:E', 50)  # User-ID
+        worksheet_group_user.freeze_panes(1, 0)
 
         # Write data to the second worksheet
         row_num = 1  # Start after the header row
@@ -86,7 +87,8 @@ class ExcelReport:
             for user_id in group_info.get('assigned_users', []):
                 user_details = self.transformed['principals']['users'].get(user_id, {})
                 user_name = user_details.get('user_name', f'User-{user_id}')
-                worksheet_summary.write_row(row_num, 0, [group_name, user_name, group_id, user_id])
+                user_display_name = user_details.get('display_name', f'User-{user_id}')
+                worksheet_group_user.write_row(row_num, 0, [group_name, user_name, user_display_name, group_id, user_id])
                 row_num += 1
 
         # Close the workbook after writing all data
