@@ -49,6 +49,6 @@ class CSV:
             csv_writer_group_lookup.writerow([group_id, display_name, external_id_0, external_id_issuer_0])
                     
         # Save to S3
-        globals.save_to_s3(object_name_assignments, f'{assignments_content.getvalue()}.csv')
-        globals.save_to_s3(user_object_name_lookup, f'{user_lookup_content.getvalue()}.csv')
-        globals.save_to_s3(group_object_name_lookup, f'{group_lookup_content.getvalue()}.csv')
+        globals.upload_to_s3(object_name = object_name_assignments, content = assignments_content.getvalue())
+        globals.upload_to_s3(object_name = user_object_name_lookup, content = user_lookup_content.getvalue())
+        globals.upload_to_s3(object_name = group_object_name_lookup, content = group_lookup_content.getvalue())

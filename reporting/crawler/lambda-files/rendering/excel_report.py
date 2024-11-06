@@ -97,4 +97,4 @@ class ExcelReport:
         # Log and upload the file to S3
         file_size = os.path.getsize(local_file_path)
         globals.LOGGER.info(f'Local Excel created. File size: {file_size / (1024 * 1024):.2f} MB')
-        globals.upload_file_to_s3(local_file_path, file_name)
+        globals.upload_to_s3(object_name = file_name, local_file_path = local_file_path)
