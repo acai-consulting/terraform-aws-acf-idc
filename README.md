@@ -14,27 +14,32 @@
 </div>
 </br>
 
-<!-- DESCRIPTION -->
-[Terraform][terraform-url] module to deploy IAM Identity Center resources to enable Single-Sign-On on AWS via an Identity Provider (e.g. Azure).
+<!-- BEGIN_ACAI_DOCS -->
+This [Terraform][terraform-url] automates the deployment of IAM Identity Center resources to enable Single Sign-On on AWS via an external Identity Provider (e.g. Azure Entra ID).
 
-<!-- ARCHITECTURE -->
-## Architecture
+This module is designed to:
 
-![architecture](https://raw.githubusercontent.com/acai-consulting/terraform-aws-acf-idc/main/docs/acf_identity_center.svg)
+- Provision IdC Permission Sets which act as reusable templates for access policies.
+- Configure IdC Assignments that link these Permission Sets to AWS Accounts and specific users or groups.
+- Facilitate centralized management of identities and permissions, reducing complexity and improving security governance.
+
+![architecture]
 
 <!-- REQUIREMENTS -->
-## Requirements
+### Requirements
 
-| :exclamation: Please ensure that the following requirements are met |
-|-----------------------------------------|
-
-- Enable AWS Organizations and add AWS Accounts.
-- Enable IAM Identity Center (successor to AWS Single Sign-On).
-- Create identities in IAM Identity Center (Users and Groups) or connect to an external identity provider. [documentation](https://docs.aws.amazon.com/singlesignon/latest/userguide/manage-your-identity-source-idp.html)
-- Ensure that Terraform pipeline is using a role with permissions required for IAM Identity Center management.
+!!! note "Please ensure that the following requirements are met"
+    - Enable AWS Organizations and add AWS Accounts.
+    - Enable IAM Identity Center (successor to AWS Single Sign-On).
+    - Create identities in IAM Identity Center (Users and Groups) or connect to an external identity provider - see [documentation](https://docs.aws.amazon.com/singlesignon/latest/userguide/manage-your-identity-source-idp.html).
+    - Ensure that Terraform pipeline is using a role with permissions required for IAM Identity Center management.
 
 <!-- USAGE -->
 ## Usage
+
+The module can be configured by defining the IdC Permission Sets and the corresponding AWS Account Assignments.
+
+Define IdC Permission Sets:
 
 ```hcl
 locals {
@@ -82,7 +87,13 @@ locals {
       })
     }
   ]
+}
+```
 
+Specify IdC Assignments:
+
+```hcl
+locals {
   account_assignments = [
     {
       account_id = "992382728088" # ACAI AWS Testbed Core Security Account
@@ -104,7 +115,11 @@ locals {
     }  
   ]
 }
+```
 
+Finally, provide the above specifications to the ACF IDC Module:
+
+```hcl
 module "aws_identity_center" {
   source  = "app.terraform.io/acai-consulting/idc/aws"
   version = "~> 1.0"
@@ -113,6 +128,8 @@ module "aws_identity_center" {
   account_assignments = local.account_assignments
 }
 ```
+<!-- END_ACAI_DOCS -->
+
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -192,3 +209,5 @@ See [LICENSE][license-url] for full details.
 [checkov-shield]: https://img.shields.io/badge/checkov-passed-green
 [license-url]: https://github.com/acai-consulting/terraform-aws-acf-idc/tree/main/LICENSE.md
 [terraform-url]: https://www.terraform.io
+[architecture]: ./docs/terraform-aws-acf-idc.png
+
