@@ -29,10 +29,10 @@ This module is designed to:
 ### Requirements
 
 !!! note "Please ensure that the following requirements are met"
-    - Enable AWS Organizations and add AWS Accounts.
-    - Enable IAM Identity Center (successor to AWS Single Sign-On).
-    - Create identities in IAM Identity Center (Users and Groups) or connect to an external identity provider - see [documentation](https://docs.aws.amazon.com/singlesignon/latest/userguide/manage-your-identity-source-idp.html).
-    - Ensure that Terraform pipeline is using a role with permissions required for IAM Identity Center management.
+- Enable AWS Organizations and add AWS Accounts.
+- Enable IAM Identity Center (successor to AWS Single Sign-On).
+- Create identities in IAM Identity Center (Users and Groups) or connect to an external identity provider - see [documentation](https://docs.aws.amazon.com/singlesignon/latest/userguide/manage-your-identity-source-idp.html).
+- Ensure that Terraform pipeline is using a role with permissions required for IAM Identity Center management.
 
 <!-- USAGE -->
 ## Usage
